@@ -56,7 +56,11 @@ class LogMonitor extends Component {
     jumpToState: PropTypes.func.isRequired,
     setMonitorState: PropTypes.func.isRequired,
     select: PropTypes.func.isRequired,
-    visibleOnLoad: PropTypes.bool
+    visibleOnLoad: PropTypes.bool,
+    theme: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.string
+    ])
   };
 
   static defaultProps = {
