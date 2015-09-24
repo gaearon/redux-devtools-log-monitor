@@ -54,7 +54,6 @@
     "redux-devtools": "^3.0.0-alpha"
   },
   "dependencies": {
-    "color": "^0.10.1",
     "react-json-tree": "^0.1.9",
     "redux-devtools-themes": "^1.0.0"
   }

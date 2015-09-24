@@ -1,5 +1,5 @@
 import React from 'react';
-import color from 'color';
+import brighten from './brighten';
 
 const styles = {
   base: {
@@ -61,7 +61,7 @@ export default class LogMonitorButton extends React.Component {
     if (this.props.enabled && this.state.hovered) {
       style = {
         ...style,
-        backgroundColor: color(this.props.theme.base02).lighten(0.2).hexString()
+        backgroundColor: brighten(this.props.theme.base02, 0.2)
       };
     }
     if (!this.props.enabled) {
