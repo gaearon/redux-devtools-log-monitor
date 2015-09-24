@@ -1,5 +1,4 @@
 import React, { PropTypes, Component } from 'react';
-import { findDOMNode } from 'react-dom';
 import { connectMonitor } from 'redux-devtools';
 import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
@@ -71,7 +70,7 @@ class LogMonitor extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    const node = findDOMNode(this.refs.elements);
+    const node = this.refs.elements;
     if (!node) {
       this.scrollDown = true;
     } else if (
@@ -88,7 +87,7 @@ class LogMonitor extends Component {
   }
 
   componentDidUpdate() {
-    const node = findDOMNode(this.refs.elements);
+    const node = this.refs.elements;
     if (!node) {
       return;
     }
