@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { connectMonitor } from 'redux-devtools';
 import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
+import { toggleVisibility } from './actions';
 import * as themes from 'redux-devtools-themes';
 
 const styles = {
@@ -42,9 +43,9 @@ class LogMonitor extends Component {
   }
 
   static propTypes = {
+    // Provided by Redux DevTools
     computedStates: PropTypes.array.isRequired,
     currentStateIndex: PropTypes.number.isRequired,
-    monitorState: PropTypes.object.isRequired,
     stagedActions: PropTypes.array.isRequired,
     skippedActions: PropTypes.object.isRequired,
     reset: PropTypes.func.isRequired,
@@ -53,9 +54,17 @@ class LogMonitor extends Component {
     sweep: PropTypes.func.isRequired,
     toggleAction: PropTypes.func.isRequired,
     jumpToState: PropTypes.func.isRequired,
-    setMonitorState: PropTypes.func.isRequired,
+
+    // Provided via built-in reducer and actions
+    monitorState: PropTypes.shape({
+      isVisible: PropTypes.bool.isRequired
+    }).isRequired,
+    monitorActions: PropTypes.shape({
+      toggleVisibility: PropTypes.func.isRequired
+    }).isRequired,
+
+    // Regular props
     select: PropTypes.func.isRequired,
-    visibleOnLoad: PropTypes.bool,
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
@@ -64,9 +73,7 @@ class LogMonitor extends Component {
 
   static defaultProps = {
     select: (state) => state,
-    monitorState: { isVisible: true },
-    theme: 'nicinabox',
-    visibleOnLoad: true
+    theme: 'nicinabox'
   };
 
   componentWillReceiveProps(nextProps) {
@@ -98,15 +105,6 @@ class LogMonitor extends Component {
     }
   }
 
-  componentWillMount() {
-    let visibleOnLoad = this.props.visibleOnLoad;
-    const { monitorState } = this.props;
-    this.props.setMonitorState({
-      ...monitorState,
-      isVisible: visibleOnLoad
-    });
-  }
-
   handleRollback() {
     this.props.rollback();
   }
@@ -128,14 +126,9 @@ class LogMonitor extends Component {
   }
 
   handleKeyPress(event) {
-    const { monitorState } = this.props;
-
     if (event.ctrlKey && event.keyCode === 72) { // Ctrl+H
       event.preventDefault();
-      this.props.setMonitorState({
-        ...monitorState,
-        isVisible: !monitorState.isVisible
-      });
+      this.props.monitorActions.toggleVisibility();
     }
   }
 
@@ -196,4 +189,4 @@ class LogMonitor extends Component {
   }
 }
 
-export default connectMonitor(LogMonitor);
+export default connectMonitor({ toggleVisibility })(LogMonitor);
