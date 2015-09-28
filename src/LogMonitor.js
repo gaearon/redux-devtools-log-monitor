@@ -43,14 +43,14 @@ class LogMonitor extends Component {
       updateScrollTop: PropTypes.func.isRequired
     }).isRequired,
 
-    devToolsState: PropTypes.shape({
+    historyState: PropTypes.shape({
       computedStates: PropTypes.array.isRequired,
       currentStateIndex: PropTypes.number.isRequired,
       stagedActions: PropTypes.array.isRequired,
       skippedActions: PropTypes.object.isRequired
     }).isRequired,
 
-    devToolsActions: PropTypes.shape({
+    historyActions: PropTypes.shape({
       reset: PropTypes.func.isRequired,
       commit: PropTypes.func.isRequired,
       rollback: PropTypes.func.isRequired,
@@ -94,8 +94,8 @@ class LogMonitor extends Component {
     if (!node) {
       this.scrollDown = true;
     } else if (
-      this.props.devToolsState.stagedActions.length <
-      nextProps.devToolsState.stagedActions.length
+      this.props.historyState.stagedActions.length <
+      nextProps.historyState.stagedActions.length
     ) {
       const { scrollTop, offsetHeight, scrollHeight } = node;
 
@@ -120,30 +120,30 @@ class LogMonitor extends Component {
   }
 
   handleRollback() {
-    this.props.devToolsActions.rollback();
+    this.props.historyActions.rollback();
   }
 
   handleSweep() {
-    this.props.devToolsActions.sweep();
+    this.props.historyActions.sweep();
   }
 
   handleCommit() {
-    this.props.devToolsActions.commit();
+    this.props.historyActions.commit();
   }
 
   handleToggleAction(index) {
-    this.props.devToolsActions.toggleAction(index);
+    this.props.historyActions.toggleAction(index);
   }
 
   handleReset() {
-    this.props.devToolsActions.reset();
+    this.props.historyActions.reset();
   }
 
   render() {
     const elements = [];
-    const { devToolsState, select } = this.props;
+    const { historyState, select } = this.props;
     // const { isVisible } = monitorState;
-    const { skippedActions, stagedActions, computedStates } = devToolsState;
+    const { skippedActions, stagedActions, computedStates } = historyState;
 
     let theme;
     if (typeof this.props.theme === 'string') {
