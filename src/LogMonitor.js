@@ -1,10 +1,8 @@
 import React, { PropTypes, Component } from 'react';
-import { ActionCreators } from 'redux-devtools';
 import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
-import { combineReducers, bindActionCreators } from 'redux';
+import { combineReducers } from 'redux';
 import * as themes from 'redux-devtools-themes';
-import { connect } from 'react-redux';
 
 const styles = {
   container: {
@@ -212,17 +210,13 @@ export default function create({ preserveScrollTop = true } = {}) {
       state;
   }
 
-  const Monitor = connect(
-    state => state,
-    dispatch => ({
-      monitorActions: bindActionCreators({ updateScrollTop }, dispatch),
-      devToolsActions: bindActionCreators(ActionCreators, dispatch)
-    })
-  )(LogMonitor);
+  const component = LogMonitor;
+  const reducer = combineReducers({ initialScrollTop });
+  const actionCreators = { updateScrollTop };
 
-  Monitor.reducer = combineReducers({
-    initialScrollTop
-  });
-
-  return Monitor;
+  return {
+    component,
+    reducer,
+    actionCreators
+  };
 }

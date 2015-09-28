@@ -52,8 +52,7 @@
   },
   "peerDependencies": {
     "redux-devtools": "^3.0.0-alpha-5",
-    "redux": "^3.0.0",
-    "react-redux": "^3.0.0"
+    "redux": "^3.0.0"
   },
   "dependencies": {
     "react-json-tree": "^0.1.9",
