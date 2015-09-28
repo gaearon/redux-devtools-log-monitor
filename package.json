@@ -1,6 +1,6 @@
 {
   "name": "redux-devtools-log-monitor",
-  "version": "1.0.0-alpha-7",
+  "version": "1.0.0-alpha-8",
   "description": "The default tree view monitor for Redux DevTools",
   "main": "lib/index.js",
   "scripts": {
@@ -51,7 +51,7 @@
     "webpack": "^1.11.0"
   },
   "peerDependencies": {
-    "redux-devtools": "^3.0.0-alpha-7",
+    "redux-devtools": "^3.0.0-alpha-8",
     "redux": "^3.0.0"
   },
   "dependencies": {
