@@ -1,9 +1,10 @@
 import React, { PropTypes, Component } from 'react';
-import { connectMonitor } from 'redux-devtools';
+import { ActionCreators } from 'redux-devtools';
 import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
-import { toggleVisibility } from './actions';
+import { combineReducers, bindActionCreators } from 'redux';
 import * as themes from 'redux-devtools-themes';
+import { connect } from 'react-redux';
 
 const styles = {
   container: {
@@ -34,36 +35,31 @@ const styles = {
   }
 };
 
-class LogMonitor extends Component {
-  constructor(props) {
-    super(props);
-    if (typeof window !== 'undefined') {
-      window.addEventListener('keydown', ::this.handleKeyPress);
-    }
-  }
-
+export default class LogMonitor extends Component {
   static propTypes = {
-    // Provided by Redux DevTools
-    computedStates: PropTypes.array.isRequired,
-    currentStateIndex: PropTypes.number.isRequired,
-    stagedActions: PropTypes.array.isRequired,
-    skippedActions: PropTypes.object.isRequired,
-    reset: PropTypes.func.isRequired,
-    commit: PropTypes.func.isRequired,
-    rollback: PropTypes.func.isRequired,
-    sweep: PropTypes.func.isRequired,
-    toggleAction: PropTypes.func.isRequired,
-    jumpToState: PropTypes.func.isRequired,
-
-    // Provided via built-in reducer and actions
     monitorState: PropTypes.shape({
-      isVisible: PropTypes.bool.isRequired
-    }).isRequired,
-    monitorActions: PropTypes.shape({
-      toggleVisibility: PropTypes.func.isRequired
+      initialScrollTop: PropTypes.number.isRequired
     }).isRequired,
 
-    // Regular props
+    monitorActions: PropTypes.shape({
+      updateScrollTop: PropTypes.func.isRequired
+    }).isRequired,
+
+    devToolsState: PropTypes.shape({
+      computedStates: PropTypes.array.isRequired,
+      currentStateIndex: PropTypes.number.isRequired,
+      stagedActions: PropTypes.array.isRequired,
+      skippedActions: PropTypes.object.isRequired
+    }).isRequired,
+
+    devToolsActions: PropTypes.shape({
+      reset: PropTypes.func.isRequired,
+      commit: PropTypes.func.isRequired,
+      rollback: PropTypes.func.isRequired,
+      sweep: PropTypes.func.isRequired,
+      toggleAction: PropTypes.func.isRequired
+    }).isRequired,
+
     select: PropTypes.func.isRequired,
     theme: PropTypes.oneOfType([
       PropTypes.object,
@@ -76,12 +72,32 @@ class LogMonitor extends Component {
     theme: 'nicinabox'
   };
 
+  componentDidMount() {
+    const node = this.refs.container;
+    if (!node) {
+      return;
+    }
+
+    node.scrollTop = this.props.monitorState.initialScrollTop;
+    this.interval = setInterval(::this.updateScrollTop, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.setInterval);
+  }
+
+  updateScrollTop() {
+    const node = this.refs.container;
+    this.props.monitorActions.updateScrollTop(node ? node.scrollTop : 0);
+  }
+
   componentWillReceiveProps(nextProps) {
-    const node = this.refs.elements;
+    const node = this.refs.container;
     if (!node) {
       this.scrollDown = true;
     } else if (
-      this.props.stagedActions.length < nextProps.stagedActions.length
+      this.props.devToolsState.stagedActions.length <
+      nextProps.devToolsState.stagedActions.length
     ) {
       const { scrollTop, offsetHeight, scrollHeight } = node;
 
@@ -94,7 +110,7 @@ class LogMonitor extends Component {
   }
 
   componentDidUpdate() {
-    const node = this.refs.elements;
+    const node = this.refs.container;
     if (!node) {
       return;
     }
@@ -106,35 +122,30 @@ class LogMonitor extends Component {
   }
 
   handleRollback() {
-    this.props.rollback();
+    this.props.devToolsActions.rollback();
   }
 
   handleSweep() {
-    this.props.sweep();
+    this.props.devToolsActions.sweep();
   }
 
   handleCommit() {
-    this.props.commit();
+    this.props.devToolsActions.commit();
   }
 
   handleToggleAction(index) {
-    this.props.toggleAction(index);
+    this.props.devToolsActions.toggleAction(index);
   }
 
   handleReset() {
-    this.props.reset();
-  }
-
-  handleKeyPress(event) {
-    if (event.ctrlKey && event.keyCode === 72) { // Ctrl+H
-      event.preventDefault();
-      this.props.monitorActions.toggleVisibility();
-    }
+    this.props.devToolsActions.reset();
   }
 
   render() {
     const elements = [];
-    const { monitorState, skippedActions, stagedActions, computedStates, select } = this.props;
+    const { devToolsState, select } = this.props;
+    // const { isVisible } = monitorState;
+    const { skippedActions, stagedActions, computedStates } = devToolsState;
 
     let theme;
     if (typeof this.props.theme === 'string') {
@@ -146,10 +157,6 @@ class LogMonitor extends Component {
       }
     } else {
       theme = this.props.theme;
-    }
-
-    if (!monitorState.isVisible) {
-      return null;
     }
 
     for (let i = 0; i < stagedActions.length; i++) {
@@ -181,7 +188,7 @@ class LogMonitor extends Component {
           <LogMonitorButton theme={theme} onClick={::this.handleSweep} enabled={Object.keys(skippedActions).some(key => skippedActions[key])}>Sweep</LogMonitorButton>
           <LogMonitorButton theme={theme} onClick={::this.handleCommit} enabled={computedStates.length > 1}>Commit</LogMonitorButton>
         </div>
-        <div style={styles.elements} ref="elements">
+        <div style={styles.elements} ref='container'>
           {elements}
         </div>
       </div>
@@ -189,4 +196,37 @@ class LogMonitor extends Component {
   }
 }
 
-export default connectMonitor({ toggleVisibility })(LogMonitor);
+const UPDATE_SCROLL_TOP = '@@redux-devtools-log-monitor/UPDATE_SCROLL_TOP';
+function updateScrollTop(scrollTop) {
+  return { type: UPDATE_SCROLL_TOP, scrollTop };
+}
+
+function createReducer({ preserveScrollTop = true }) {
+  function initialScrollTop(state = 0, action) {
+    if (!preserveScrollTop) {
+      return 0;
+    }
+
+    return action.type === UPDATE_SCROLL_TOP ?
+      action.scrollTop :
+      state;
+  }
+
+  return combineReducers({ initialScrollTop });
+}
+
+function mapStateToProps(state) {
+  return state;
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    monitorActions: bindActionCreators({ updateScrollTop }, dispatch),
+    devToolsActions: bindActionCreators(ActionCreators, dispatch)
+  };
+}
+
+LogMonitor = connect(mapStateToProps, mapDispatchToProps)(LogMonitor);
+LogMonitor.createReducer = createReducer;
+
+export default LogMonitor;
