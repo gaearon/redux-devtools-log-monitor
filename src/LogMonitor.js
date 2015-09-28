@@ -35,7 +35,7 @@ const styles = {
   }
 };
 
-export default class LogMonitor extends Component {
+class LogMonitor extends Component {
   static propTypes = {
     monitorState: PropTypes.shape({
       initialScrollTop: PropTypes.number.isRequired
@@ -201,7 +201,7 @@ function updateScrollTop(scrollTop) {
   return { type: UPDATE_SCROLL_TOP, scrollTop };
 }
 
-function createReducer({ preserveScrollTop = true }) {
+export default function create({ preserveScrollTop = true } = {}) {
   function initialScrollTop(state = 0, action) {
     if (!preserveScrollTop) {
       return 0;
@@ -212,21 +212,17 @@ function createReducer({ preserveScrollTop = true }) {
       state;
   }
 
-  return combineReducers({ initialScrollTop });
+  const Monitor = connect(
+    state => state,
+    dispatch => ({
+      monitorActions: bindActionCreators({ updateScrollTop }, dispatch),
+      devToolsActions: bindActionCreators(ActionCreators, dispatch)
+    })
+  )(LogMonitor);
+
+  Monitor.reducer = combineReducers({
+    initialScrollTop
+  });
+
+  return Monitor;
 }
-
-function mapStateToProps(state) {
-  return state;
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    monitorActions: bindActionCreators({ updateScrollTop }, dispatch),
-    devToolsActions: bindActionCreators(ActionCreators, dispatch)
-  };
-}
-
-LogMonitor = connect(mapStateToProps, mapDispatchToProps)(LogMonitor);
-LogMonitor.createReducer = createReducer;
-
-export default LogMonitor;
