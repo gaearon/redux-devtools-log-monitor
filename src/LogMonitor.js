@@ -33,22 +33,29 @@ const styles = {
   }
 };
 
-class LogMonitor extends Component {
+export default class LogMonitor extends Component {
   static propTypes = {
+    preserveScrollTop: PropTypes.bool,
+    select: PropTypes.func.isRequired,
+    theme: PropTypes.oneOfType([
+      PropTypes.object,
+      PropTypes.string
+    ]),
+
     monitorState: PropTypes.shape({
       initialScrollTop: PropTypes.number.isRequired
-    }).isRequired,
+    }),
 
     monitorActions: PropTypes.shape({
       updateScrollTop: PropTypes.func.isRequired
-    }).isRequired,
+    }),
 
     historyState: PropTypes.shape({
       computedStates: PropTypes.array.isRequired,
       currentStateIndex: PropTypes.number.isRequired,
       stagedActions: PropTypes.array.isRequired,
       skippedActions: PropTypes.object.isRequired
-    }).isRequired,
+    }),
 
     historyActions: PropTypes.shape({
       reset: PropTypes.func.isRequired,
@@ -56,18 +63,13 @@ class LogMonitor extends Component {
       rollback: PropTypes.func.isRequired,
       sweep: PropTypes.func.isRequired,
       toggleAction: PropTypes.func.isRequired
-    }).isRequired,
-
-    select: PropTypes.func.isRequired,
-    theme: PropTypes.oneOfType([
-      PropTypes.object,
-      PropTypes.string
-    ])
+    })
   };
 
   static defaultProps = {
     select: (state) => state,
-    theme: 'nicinabox'
+    theme: 'nicinabox',
+    preserveScrollTop: true
   };
 
   componentDidMount() {
@@ -199,9 +201,9 @@ function updateScrollTop(scrollTop) {
   return { type: UPDATE_SCROLL_TOP, scrollTop };
 }
 
-export default function create({ preserveScrollTop = true } = {}) {
+LogMonitor.setup = function setup(props) {
   function initialScrollTop(state = 0, action) {
-    if (!preserveScrollTop) {
+    if (!props.preserveScrollTop) {
       return 0;
     }
 
@@ -210,13 +212,8 @@ export default function create({ preserveScrollTop = true } = {}) {
       state;
   }
 
-  const component = LogMonitor;
   const reducer = combineReducers({ initialScrollTop });
   const actionCreators = { updateScrollTop };
 
-  return {
-    component,
-    reducer,
-    actionCreators
-  };
-}
+  return { reducer, actionCreators };
+};
