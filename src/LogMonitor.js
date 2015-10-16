@@ -1,8 +1,12 @@
 import React, { PropTypes, Component } from 'react';
 import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
-import { combineReducers } from 'redux';
 import * as themes from 'redux-devtools-themes';
+import { ActionCreators } from 'redux-devtools';
+import { updateScrollTop } from './actions';
+import reducer from './reducers';
+
+const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
 
 const styles = {
   container: {
@@ -34,36 +38,23 @@ const styles = {
 };
 
 export default class LogMonitor extends Component {
+  static reducer = reducer;
+
   static propTypes = {
+    dispatch: PropTypes.func,
+    computedStates: PropTypes.array,
+    stagedActions: PropTypes.array,
+    skippedActions: PropTypes.object,
+    monitorState: PropTypes.shape({
+      initialScrollTop: PropTypes.number
+    }),
+
     preserveScrollTop: PropTypes.bool,
     select: PropTypes.func.isRequired,
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
-    ]),
-
-    monitorState: PropTypes.shape({
-      initialScrollTop: PropTypes.number.isRequired
-    }),
-
-    monitorActions: PropTypes.shape({
-      updateScrollTop: PropTypes.func.isRequired
-    }),
-
-    historyState: PropTypes.shape({
-      computedStates: PropTypes.array.isRequired,
-      currentStateIndex: PropTypes.number.isRequired,
-      stagedActions: PropTypes.array.isRequired,
-      skippedActions: PropTypes.object.isRequired
-    }),
-
-    historyActions: PropTypes.shape({
-      reset: PropTypes.func.isRequired,
-      commit: PropTypes.func.isRequired,
-      rollback: PropTypes.func.isRequired,
-      sweep: PropTypes.func.isRequired,
-      toggleAction: PropTypes.func.isRequired
-    })
+    ])
   };
 
   static defaultProps = {
@@ -88,7 +79,7 @@ export default class LogMonitor extends Component {
 
   updateScrollTop() {
     const node = this.refs.container;
-    this.props.monitorActions.updateScrollTop(node ? node.scrollTop : 0);
+    this.props.dispatch(updateScrollTop(node ? node.scrollTop : 0));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -96,8 +87,8 @@ export default class LogMonitor extends Component {
     if (!node) {
       this.scrollDown = true;
     } else if (
-      this.props.historyState.stagedActions.length <
-      nextProps.historyState.stagedActions.length
+      this.props.stagedActions.length <
+      nextProps.stagedActions.length
     ) {
       const { scrollTop, offsetHeight, scrollHeight } = node;
 
@@ -122,30 +113,28 @@ export default class LogMonitor extends Component {
   }
 
   handleRollback() {
-    this.props.historyActions.rollback();
+    this.props.dispatch(rollback());
   }
 
   handleSweep() {
-    this.props.historyActions.sweep();
+    this.props.dispatch(sweep());
   }
 
   handleCommit() {
-    this.props.historyActions.commit();
+    this.props.dispatch(commit());
   }
 
   handleToggleAction(index) {
-    this.props.historyActions.toggleAction(index);
+    this.props.dispatch(toggleAction(index));
   }
 
   handleReset() {
-    this.props.historyActions.reset();
+    this.props.dispatch(reset());
   }
 
   render() {
     const elements = [];
-    const { historyState, select } = this.props;
-    // const { isVisible } = monitorState;
-    const { skippedActions, stagedActions, computedStates } = historyState;
+    const { skippedActions, stagedActions, computedStates, select } = this.props;
 
     let theme;
     if (typeof this.props.theme === 'string') {
@@ -183,10 +172,18 @@ export default class LogMonitor extends Component {
     return (
       <div style={{...styles.container, backgroundColor: theme.base00}}>
         <div style={{...styles.buttonBar, borderColor: theme.base02}}>
-          <LogMonitorButton theme={theme} onClick={::this.handleReset}>Reset</LogMonitorButton>
-          <LogMonitorButton theme={theme} onClick={::this.handleRollback} enabled={computedStates.length}>Revert</LogMonitorButton>
-          <LogMonitorButton theme={theme} onClick={::this.handleSweep} enabled={Object.keys(skippedActions).some(key => skippedActions[key])}>Sweep</LogMonitorButton>
-          <LogMonitorButton theme={theme} onClick={::this.handleCommit} enabled={computedStates.length > 1}>Commit</LogMonitorButton>
+          <LogMonitorButton theme={theme} onClick={::this.handleReset} enabled>
+            Reset
+          </LogMonitorButton>
+          <LogMonitorButton theme={theme} onClick={::this.handleRollback} enabled={computedStates.length > 1}>
+            Revert
+          </LogMonitorButton>
+          <LogMonitorButton theme={theme} onClick={::this.handleSweep} enabled={Object.keys(skippedActions).some(key => skippedActions[key])}>
+            Sweep
+          </LogMonitorButton>
+          <LogMonitorButton theme={theme} onClick={::this.handleCommit} enabled={computedStates.length > 1}>
+            Commit
+          </LogMonitorButton>
         </div>
         <div style={styles.elements} ref='container'>
           {elements}
@@ -195,25 +192,3 @@ export default class LogMonitor extends Component {
     );
   }
 }
-
-const UPDATE_SCROLL_TOP = '@@redux-devtools-log-monitor/UPDATE_SCROLL_TOP';
-function updateScrollTop(scrollTop) {
-  return { type: UPDATE_SCROLL_TOP, scrollTop };
-}
-
-LogMonitor.setup = function setup(props) {
-  function initialScrollTop(state = 0, action) {
-    if (!props.preserveScrollTop) {
-      return 0;
-    }
-
-    return action.type === UPDATE_SCROLL_TOP ?
-      action.scrollTop :
-      state;
-  }
-
-  const reducer = combineReducers({ initialScrollTop });
-  const actionCreators = { updateScrollTop };
-
-  return { reducer, actionCreators };
-};
