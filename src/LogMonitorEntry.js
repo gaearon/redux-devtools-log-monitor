@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import JSONTree from 'react-json-tree';
 import LogMonitorEntryAction from './LogMonitorEntryAction';
+import shouldPureComponentUpdate from 'react-pure-render/function';
 
 const styles = {
   entry: {
@@ -23,20 +24,25 @@ export default class LogMonitorEntry extends Component {
     collapsed: PropTypes.bool
   };
 
+  shouldComponentUpdate = shouldPureComponentUpdate;
+
   printState(state, error) {
     let errorText = error;
     if (!errorText) {
       try {
-        return <JSONTree
-          theme={this.props.theme}
-          keyName={'state'}
-          data={this.props.select(state)}
-          previousData={this.props.select(this.props.previousState)}
-          style={styles.tree}/>;
+        return (
+          <JSONTree
+            theme={this.props.theme}
+            keyName={'state'}
+            data={this.props.select(state)}
+            previousData={this.props.select(this.props.previousState)}
+            style={styles.tree} />
+        );
       } catch (err) {
         errorText = 'Error selecting state.';
       }
     }
+
     return (
       <div style={{
         color: this.props.theme.base08,

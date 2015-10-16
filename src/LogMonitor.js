@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
+import shouldPureComponentUpdate from 'react-pure-render/function';
 import * as themes from 'redux-devtools-themes';
 import { ActionCreators } from 'redux-devtools';
 import { updateScrollTop } from './actions';
@@ -62,6 +63,17 @@ export default class LogMonitor extends Component {
     theme: 'nicinabox',
     preserveScrollTop: true
   };
+
+  shouldComponentUpdate = shouldPureComponentUpdate;
+
+  constructor(props) {
+    super(props);
+    this.handleToggleAction = this.handleToggleAction.bind(this);
+    this.handleReset = this.handleReset.bind(this);
+    this.handleRollback = this.handleRollback.bind(this);
+    this.handleSweep = this.handleSweep.bind(this);
+    this.handleCommit = this.handleCommit.bind(this);
+  }
 
   componentDidMount() {
     const node = this.refs.container;
@@ -165,23 +177,35 @@ export default class LogMonitor extends Component {
                          previousState={previousState}
                          collapsed={skippedActions[i]}
                          error={error}
-                         onActionClick={::this.handleToggleAction} />
+                         onActionClick={this.handleToggleAction} />
       );
     }
 
     return (
       <div style={{...styles.container, backgroundColor: theme.base00}}>
         <div style={{...styles.buttonBar, borderColor: theme.base02}}>
-          <LogMonitorButton theme={theme} onClick={::this.handleReset} enabled>
+          <LogMonitorButton
+            theme={theme}
+            onClick={this.handleReset}
+            enabled>
             Reset
           </LogMonitorButton>
-          <LogMonitorButton theme={theme} onClick={::this.handleRollback} enabled={computedStates.length > 1}>
+          <LogMonitorButton
+            theme={theme}
+            onClick={this.handleRollback}
+            enabled={computedStates.length > 1}>
             Revert
           </LogMonitorButton>
-          <LogMonitorButton theme={theme} onClick={::this.handleSweep} enabled={Object.keys(skippedActions).some(key => skippedActions[key])}>
+          <LogMonitorButton
+            theme={theme}
+            onClick={this.handleSweep}
+            enabled={Object.keys(skippedActions).some(key => skippedActions[key])}>
             Sweep
           </LogMonitorButton>
-          <LogMonitorButton theme={theme} onClick={::this.handleCommit} enabled={computedStates.length > 1}>
+          <LogMonitorButton
+            theme={theme}
+            onClick={this.handleCommit}
+            enabled={computedStates.length > 1}>
             Commit
           </LogMonitorButton>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import brighten from './brighten';
+import shouldPureComponentUpdate from 'react-pure-render/function';
 
 const styles = {
   base: {
@@ -20,8 +21,17 @@ const styles = {
 };
 
 export default class LogMonitorButton extends React.Component {
+  shouldComponentUpdate = shouldPureComponentUpdate;
+
   constructor(props) {
     super(props);
+
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.onClick = this.onClick.bind(this);
+
     this.state = {
       hovered: false,
       active: false
@@ -73,11 +83,12 @@ export default class LogMonitorButton extends React.Component {
       };
     }
     return (
-      <a onMouseEnter={::this.handleMouseEnter}
-          onMouseLeave={::this.handleMouseLeave}
-          onMouseDown={::this.handleMouseDown}
-          onMouseUp={::this.handleMouseUp}
-          style={style} onClick={::this.onClick}>
+      <a onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          onMouseDown={this.handleMouseDown}
+          onMouseUp={this.handleMouseUp}
+          onClick={this.onClick}
+          style={style}>
         {this.props.children}
       </a>
     );
