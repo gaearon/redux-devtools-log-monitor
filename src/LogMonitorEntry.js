@@ -15,9 +15,9 @@ const styles = {
 
 export default class LogMonitorEntry extends Component {
   static propTypes = {
-    index: PropTypes.number.isRequired,
     state: PropTypes.object.isRequired,
     action: PropTypes.object.isRequired,
+    actionId: PropTypes.number.isRequired,
     select: PropTypes.func.isRequired,
     error: PropTypes.string,
     onActionClick: PropTypes.func.isRequired,
@@ -25,6 +25,11 @@ export default class LogMonitorEntry extends Component {
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
+
+  constructor(props) {
+    super(props);
+    this.handleActionClick = this.handleActionClick.bind(this);
+  }
 
   printState(state, error) {
     let errorText = error;
@@ -57,17 +62,17 @@ export default class LogMonitorEntry extends Component {
   }
 
   handleActionClick() {
-    const { index, onActionClick } = this.props;
-    if (index > 0) {
-      onActionClick(index);
+    const { actionId, onActionClick } = this.props;
+    if (actionId > 0) {
+      onActionClick(actionId);
     }
   }
 
   render() {
-    const { index, error, action, state, collapsed } = this.props;
+    const { actionId, error, action, state, collapsed } = this.props;
     const styleEntry = {
       opacity: collapsed ? 0.5 : 1,
-      cursor: (index > 0) ? 'pointer' : 'default'
+      cursor: (actionId > 0) ? 'pointer' : 'default'
     };
     return (
       <div style={{textDecoration: collapsed ? 'line-through' : 'none'}}>
@@ -75,7 +80,7 @@ export default class LogMonitorEntry extends Component {
           theme={this.props.theme}
           collapsed={collapsed}
           action={action}
-          onClick={::this.handleActionClick}
+          onClick={this.handleActionClick}
           style={{...styles.entry, ...styleEntry}}/>
         {!collapsed &&
           <div>

@@ -44,8 +44,9 @@ export default class LogMonitor extends Component {
   static propTypes = {
     dispatch: PropTypes.func,
     computedStates: PropTypes.array,
-    stagedActions: PropTypes.array,
-    skippedActions: PropTypes.object,
+    actionsByIds: PropTypes.object,
+    stagedActionIds: PropTypes.array,
+    skippedActionIds: PropTypes.array,
     monitorState: PropTypes.shape({
       initialScrollTop: PropTypes.number
     }),
@@ -99,8 +100,8 @@ export default class LogMonitor extends Component {
     if (!node) {
       this.scrollDown = true;
     } else if (
-      this.props.stagedActions.length <
-      nextProps.stagedActions.length
+      this.props.stagedActionIds.length <
+      nextProps.stagedActionIds.length
     ) {
       const { scrollTop, offsetHeight, scrollHeight } = node;
 
@@ -136,46 +137,50 @@ export default class LogMonitor extends Component {
     this.props.dispatch(commit());
   }
 
-  handleToggleAction(index) {
-    this.props.dispatch(toggleAction(index));
+  handleToggleAction(id) {
+    this.props.dispatch(toggleAction(id));
   }
 
   handleReset() {
     this.props.dispatch(reset());
   }
 
-  render() {
-    const elements = [];
-    const { skippedActions, stagedActions, computedStates, select } = this.props;
-
-    let theme;
-    if (typeof this.props.theme === 'string') {
-      if (typeof themes[this.props.theme] !== 'undefined') {
-        theme = themes[this.props.theme];
-      } else {
-        console.warn('DevTools theme ' + this.props.theme + ' not found, defaulting to nicinabox');
-        theme = themes.nicinabox;
-      }
-    } else {
-      theme = this.props.theme;
+  getTheme() {
+    let { theme } = this.props;
+    if (typeof theme !== 'string') {
+      return theme;
     }
 
-    for (let i = 0; i < stagedActions.length; i++) {
-      const action = stagedActions[i];
+    if (typeof themes[theme] !== 'undefined') {
+      return themes[theme];
+    }
+
+    console.warn('DevTools theme ' + theme + ' not found, defaulting to nicinabox');
+    return themes.nicinabox;
+  }
+
+  render() {
+    const elements = [];
+    const theme = this.getTheme();
+    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
+
+    for (let i = 0; i < stagedActionIds.length; i++) {
+      const actionId = stagedActionIds[i];
+      const action = actionsById[actionId].action;
       const { state, error } = computedStates[i];
       let previousState;
       if (i > 0) {
         previousState = computedStates[i - 1].state;
       }
       elements.push(
-        <LogMonitorEntry key={i}
-                         index={i}
+        <LogMonitorEntry key={actionId}
                          theme={theme}
                          select={select}
                          action={action}
+                         actionId={actionId}
                          state={state}
                          previousState={previousState}
-                         collapsed={skippedActions[i]}
+                         collapsed={skippedActionIds.indexOf(actionId) > -1}
                          error={error}
                          onActionClick={this.handleToggleAction} />
       );
@@ -199,7 +204,7 @@ export default class LogMonitor extends Component {
           <LogMonitorButton
             theme={theme}
             onClick={this.handleSweep}
-            enabled={Object.keys(skippedActions).some(key => skippedActions[key])}>
+            enabled={skippedActionIds.length > 0}>
             Sweep
           </LogMonitorButton>
           <LogMonitorButton
