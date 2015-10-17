@@ -74,8 +74,12 @@ export default class LogMonitorEntry extends Component {
       opacity: collapsed ? 0.5 : 1,
       cursor: (actionId > 0) ? 'pointer' : 'default'
     };
+
     return (
-      <div style={{textDecoration: collapsed ? 'line-through' : 'none'}}>
+      <div style={{
+        textDecoration: collapsed ? 'line-through' : 'none',
+        color: this.props.theme.base06
+      }}>
         <LogMonitorEntryAction
           theme={this.props.theme}
           collapsed={collapsed}
