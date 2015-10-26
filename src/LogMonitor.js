@@ -44,7 +44,7 @@ export default class LogMonitor extends Component {
   static propTypes = {
     dispatch: PropTypes.func,
     computedStates: PropTypes.array,
-    actionsByIds: PropTypes.object,
+    actionsById: PropTypes.object,
     stagedActionIds: PropTypes.array,
     skippedActionIds: PropTypes.array,
     monitorState: PropTypes.shape({
