@@ -16,7 +16,8 @@ const styles = {
     overflowY: 'hidden',
     width: '100%',
     height: '100%',
-    minWidth: 300
+    minWidth: 300,
+    direction: 'ltr'
   },
   buttonBar: {
     textAlign: 'center',
