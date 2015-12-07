@@ -48,6 +48,7 @@ export default class LogMonitor extends Component {
     actionsById: PropTypes.object,
     stagedActionIds: PropTypes.array,
     skippedActionIds: PropTypes.array,
+    actionTransformer: PropTypes.func,
     monitorState: PropTypes.shape({
       initialScrollTop: PropTypes.number
     }),
@@ -62,6 +63,7 @@ export default class LogMonitor extends Component {
 
   static defaultProps = {
     select: (state) => state,
+    actionTransformer: (action) => action,
     theme: 'nicinabox',
     preserveScrollTop: true
   };
@@ -163,11 +165,12 @@ export default class LogMonitor extends Component {
   render() {
     const elements = [];
     const theme = this.getTheme();
-    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
+    const { actionTransformer, actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
 
     for (let i = 0; i < stagedActionIds.length; i++) {
       const actionId = stagedActionIds[i];
       const action = actionsById[actionId].action;
+      const transformedAction = actionTransformer(action);
       const { state, error } = computedStates[i];
       let previousState;
       if (i > 0) {
@@ -177,7 +180,7 @@ export default class LogMonitor extends Component {
         <LogMonitorEntry key={actionId}
                          theme={theme}
                          select={select}
-                         action={action}
+                         action={transformedAction}
                          actionId={actionId}
                          state={state}
                          previousState={previousState}
