@@ -21,7 +21,9 @@ export default class LogMonitorEntry extends Component {
     select: PropTypes.func.isRequired,
     error: PropTypes.string,
     onActionClick: PropTypes.func.isRequired,
-    collapsed: PropTypes.bool
+    collapsed: PropTypes.bool,
+    expandActionRoot: PropTypes.bool,
+    expandStateRoot: PropTypes.bool
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
@@ -41,6 +43,7 @@ export default class LogMonitorEntry extends Component {
             keyName={'state'}
             data={this.props.select(state)}
             previousData={this.props.select(this.props.previousState)}
+            expandRoot={this.props.expandStateRoot}
             style={styles.tree} />
         );
       } catch (err) {
@@ -84,6 +87,7 @@ export default class LogMonitorEntry extends Component {
           theme={this.props.theme}
           collapsed={collapsed}
           action={action}
+          expandActionRoot={this.props.expandActionRoot}
           onClick={this.handleActionClick}
           style={{...styles.entry, ...styleEntry}}/>
         {!collapsed &&
