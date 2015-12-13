@@ -39,7 +39,7 @@ const styles = {
   }
 };
 
-class LogMonitor extends Component {
+export default class LogMonitor extends Component {
   static reducer = reducer;
 
   static propTypes = {
@@ -222,5 +222,3 @@ class LogMonitor extends Component {
     );
   }
 }
-
-export default LogMonitor;
