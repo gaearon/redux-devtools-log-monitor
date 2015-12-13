@@ -20,7 +20,7 @@ const styles = {
   }
 };
 
-export default class LogMonitorButton extends React.Component {
+class LogMonitorButton extends React.Component {
   shouldComponentUpdate = shouldPureComponentUpdate;
 
   constructor(props) {
@@ -94,3 +94,5 @@ export default class LogMonitorButton extends React.Component {
     );
   }
 }
+
+export default LogMonitorButton;

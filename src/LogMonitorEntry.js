@@ -13,7 +13,7 @@ const styles = {
   }
 };
 
-export default class LogMonitorEntry extends Component {
+class LogMonitorEntry extends Component {
   static propTypes = {
     state: PropTypes.object.isRequired,
     action: PropTypes.object.isRequired,
@@ -95,3 +95,5 @@ export default class LogMonitorEntry extends Component {
     );
   }
 }
+
+export default LogMonitorEntry;
