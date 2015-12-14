@@ -35,6 +35,13 @@ Consult the [`DockMonitor` README](https://github.com/gaearon/redux-devtools-doc
 
 [Read how to start using Redux DevTools.](https://github.com/gaearon/redux-devtools)
 
+### Features
+
+Every action is displayed in the log. You can expand the tree view to inspect the `action` object and the `state` after it.
+
+Clicking an action will disable it. It will appear crossed out, and the state will be recalculated as if the action never happened. Clicking it once again will enable it back. Use this together with a hot reloading solution to work sequentially on different states of your app without reproducing them by hand. You can toggle any action except for the initial one.
+
+There are four buttons at the very top. “Reset” takes your app to the state you created the store with. The other three buttons work together. You might find it useful to think of them like you think of Git commits. “Commit” removes all actions in your log, and makes the current state your initial state. This is useful when you start working on a feature and want to remove the previous noise. After you’ve dispatched a few actions, you can press “Revert” to go back to the last committed state. Finally, if you dispatched some actions by mistake and you don’t want them around, you can toggle them by clicking on them, and press “Sweep” to completely remove all currently disabled actions from the log.
 
 ### Props
 
