@@ -13,7 +13,7 @@ const styles = {
   }
 };
 
-export default class LogMonitorAction extends React.Component {
+class LogMonitorAction extends React.Component {
   renderPayload(payload) {
     return (
       <div style={{
@@ -42,3 +42,5 @@ export default class LogMonitorAction extends React.Component {
     );
   }
 }
+
+export default LogMonitorAction;
