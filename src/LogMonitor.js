@@ -40,7 +40,7 @@ const styles = {
 };
 
 export default class LogMonitor extends Component {
-  static reducer = reducer;
+  static update = reducer;
 
   static propTypes = {
     dispatch: PropTypes.func,
