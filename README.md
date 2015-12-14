@@ -1,7 +1,7 @@
 Redux DevTools Log Monitor
 =========================
 
-The default monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools).  
+The default monitor for [Redux DevTools](https://github.com/gaearon/redux-devtools) with a tree view.  
 It shows a log of states and actions, and lets you change their history.
 
 ![](http://i.imgur.com/J4GeW0M.gif)
