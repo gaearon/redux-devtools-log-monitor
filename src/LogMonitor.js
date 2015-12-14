@@ -88,7 +88,7 @@ class LogMonitor extends Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.setInterval);
+    clearInterval(this.interval);
   }
 
   updateScrollTop() {
