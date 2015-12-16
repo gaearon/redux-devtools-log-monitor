@@ -1,7 +1,7 @@
 {
-  "name": "redux-devtools-log-monitor",
+  "name": "redux-devtools-log-monitor-filtrable",
   "version": "1.0.1",
-  "description": "The default tree view monitor for Redux DevTools",
+  "description": "Redux DevTools tree view monitor with the ability to filter actions.",
   "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf lib",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gaearon/redux-devtools-log-monitor.git"
+    "url": "https://github.com/zalmoxisus/redux-devtools-log-monitor-filtarable.git"
   },
   "keywords": [
     "redux",
@@ -24,7 +24,10 @@
     "time travel",
     "live edit"
   ],
-  "author": "Dan Abramov <dan.abramov@me.com> (http://github.com/gaearon)",
+  "authors": [
+    "Mihail Diordiev <zalmoxisus@gmail.com> (https://github.com/zalmoxisus)",
+    "Dan Abramov <dan.abramov@me.com> (http://github.com/gaearon)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/gaearon/redux-devtools-log-monitor/issues"

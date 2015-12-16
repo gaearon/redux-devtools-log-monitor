@@ -54,6 +54,10 @@ export default class LogMonitor extends Component {
 
     preserveScrollTop: PropTypes.bool,
     select: PropTypes.func.isRequired,
+    filter: PropTypes.shape({
+      whitelist: PropTypes.array,
+      blacklist: PropTypes.array
+    }),
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
@@ -163,11 +167,19 @@ export default class LogMonitor extends Component {
   render() {
     const elements = [];
     const theme = this.getTheme();
-    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
+    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select, filter } = this.props;
 
     for (let i = 0; i < stagedActionIds.length; i++) {
       const actionId = stagedActionIds[i];
       const action = actionsById[actionId].action;
+      if (
+        filter && (
+          filter.whitelist &&
+          filter.whitelist.indexOf(action.type) === -1 ||
+          filter.blacklist &&
+          filter.blacklist.indexOf(action.type) !== -1
+        )
+      ) continue;
       const { state, error } = computedStates[i];
       let previousState;
       if (i > 0) {
