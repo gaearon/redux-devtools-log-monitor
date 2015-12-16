@@ -1,6 +1,6 @@
 import { UPDATE_SCROLL_TOP } from './actions';
 
-function initialScrollTop(state = 0, action, props) {
+function initialScrollTop(props, state = 0, action) {
   if (!props.preserveScrollTop) {
     return 0;
   }
@@ -10,8 +10,8 @@ function initialScrollTop(state = 0, action, props) {
     state;
 }
 
-export default function reducer(state = {}, action, props) {
+export default function reducer(props, state = {}, action) {
   return {
-    initialScrollTop: initialScrollTop(state.initialScrollTop, action, props)
+    initialScrollTop: initialScrollTop(props, state.initialScrollTop, action)
   };
 }
