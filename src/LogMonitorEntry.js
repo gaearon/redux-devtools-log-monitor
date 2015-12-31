@@ -1,7 +1,8 @@
-import React, { PropTypes, Component } from 'react';
-import JSONTree from 'react-json-tree';
-import LogMonitorEntryAction from './LogMonitorEntryAction';
-import shouldPureComponentUpdate from 'react-pure-render/function';
+const React = require('react');
+const { PropTypes, Component } = React;
+const JSONTree = require('react-json-tree');
+const LogMonitorEntryAction = require('./LogMonitorEntryAction');
+const shouldPureComponentUpdate = require('react-pure-render/function');
 
 const styles = {
   entry: {
@@ -13,7 +14,7 @@ const styles = {
   }
 };
 
-export default class LogMonitorEntry extends Component {
+class LogMonitorEntry extends Component {
   static propTypes = {
     state: PropTypes.object.isRequired,
     action: PropTypes.object.isRequired,
@@ -95,3 +96,5 @@ export default class LogMonitorEntry extends Component {
     );
   }
 }
+
+module.exports = LogMonitorEntry;

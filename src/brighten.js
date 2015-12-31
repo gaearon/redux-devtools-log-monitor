@@ -1,4 +1,4 @@
-export default function(hexColor, lightness) {
+module.exports = function brighten(hexColor, lightness) {
   let hex = String(hexColor).replace(/[^0-9a-f]/gi, '');
   if (hex.length < 6) {
     hex = hex.replace(/(.)/g, '$1$1');
@@ -13,4 +13,4 @@ export default function(hexColor, lightness) {
     rgb += ('00' + c).substr(c.length);
   }
   return rgb;
-}
+};
