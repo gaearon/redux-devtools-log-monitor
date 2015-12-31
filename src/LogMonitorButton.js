@@ -1,6 +1,6 @@
-import React from 'react';
-import brighten from './brighten';
-import shouldPureComponentUpdate from 'react-pure-render/function';
+const React = require('react');
+const brighten = require('./brighten');
+const shouldPureComponentUpdate = require('react-pure-render/function');
 
 const styles = {
   base: {
@@ -20,7 +20,7 @@ const styles = {
   }
 };
 
-export default class LogMonitorButton extends React.Component {
+class LogMonitorButton extends React.Component {
   shouldComponentUpdate = shouldPureComponentUpdate;
 
   constructor(props) {
@@ -94,3 +94,5 @@ export default class LogMonitorButton extends React.Component {
     );
   }
 }
+
+module.exports = LogMonitorButton;

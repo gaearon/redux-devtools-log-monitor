@@ -1,4 +1,4 @@
-import { UPDATE_SCROLL_TOP } from './actions';
+const { UPDATE_SCROLL_TOP } = require('./actions');
 
 function initialScrollTop(props, state = 0, action) {
   if (!props.preserveScrollTop) {
@@ -10,8 +10,8 @@ function initialScrollTop(props, state = 0, action) {
     state;
 }
 
-export default function reducer(props, state = {}, action) {
+module.exports = function reducer(props, state = {}, action) {
   return {
     initialScrollTop: initialScrollTop(props, state.initialScrollTop, action)
   };
-}
+};

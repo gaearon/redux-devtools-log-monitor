@@ -1,1 +1,1 @@
-export default from './LogMonitor';
+module.exports = require('./LogMonitor');

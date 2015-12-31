@@ -1,11 +1,12 @@
-import React, { PropTypes, Component } from 'react';
-import LogMonitorEntry from './LogMonitorEntry';
-import LogMonitorButton from './LogMonitorButton';
-import shouldPureComponentUpdate from 'react-pure-render/function';
-import * as themes from 'redux-devtools-themes';
-import { ActionCreators } from 'redux-devtools';
-import { updateScrollTop } from './actions';
-import reducer from './reducers';
+const React = require('react');
+const { PropTypes, Component } = React;
+const LogMonitorEntry = require('./LogMonitorEntry');
+const LogMonitorButton = require('./LogMonitorButton');
+const shouldPureComponentUpdate = require('react-pure-render/function');
+const themes = require('redux-devtools-themes'); // FIXME?
+const { ActionCreators } = require('redux-devtools');
+const { updateScrollTop } = require('./actions');
+const reducer = require('./reducers');
 
 const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
 
@@ -39,7 +40,7 @@ const styles = {
   }
 };
 
-export default class LogMonitor extends Component {
+class LogMonitor extends Component {
   static update = reducer;
 
   static propTypes = {
@@ -222,3 +223,5 @@ export default class LogMonitor extends Component {
     );
   }
 }
+
+module.exports = LogMonitor;

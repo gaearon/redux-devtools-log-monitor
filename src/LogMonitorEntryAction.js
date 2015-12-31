@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import JSONTree from 'react-json-tree';
+const React = require('react');
+const { Component } = React;
+const JSONTree = require('react-json-tree');
 
 const styles = {
   actionBar: {
@@ -13,7 +14,7 @@ const styles = {
   }
 };
 
-export default class LogMonitorAction extends Component {
+class LogMonitorAction extends Component {
   renderPayload(payload) {
     return (
       <div style={{
@@ -42,3 +43,5 @@ export default class LogMonitorAction extends Component {
     );
   }
 }
+
+module.exports = LogMonitorAction;
