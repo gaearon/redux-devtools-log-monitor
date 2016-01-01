@@ -21,7 +21,8 @@ export default class LogMonitorEntry extends Component {
     select: PropTypes.func.isRequired,
     error: PropTypes.string,
     onActionClick: PropTypes.func.isRequired,
-    collapsed: PropTypes.bool
+    collapsed: PropTypes.bool,
+    expandState: PropTypes.bool
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
@@ -41,7 +42,8 @@ export default class LogMonitorEntry extends Component {
             keyName={'state'}
             data={this.props.select(state)}
             previousData={this.props.select(this.props.previousState)}
-            style={styles.tree} />
+            style={styles.tree}
+            expandRoot={this.props.expandState} />
         );
       } catch (err) {
         errorText = 'Error selecting state.';
