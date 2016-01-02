@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import JSONTree from 'react-json-tree';
 
 const styles = {
@@ -13,7 +13,7 @@ const styles = {
   }
 };
 
-export default class LogMonitorAction extends React.Component {
+export default class LogMonitorAction extends Component {
   renderPayload(payload) {
     return (
       <div style={{
