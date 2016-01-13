@@ -20,7 +20,11 @@ export default class LogMonitorAction extends Component {
         ...styles.payload,
         backgroundColor: this.props.theme.base00
       }}>
-        { Object.keys(payload).length > 0 ? <JSONTree theme={this.props.theme} keyName={'action'} data={payload}/> : '' }
+        { Object.keys(payload).length > 0 ?
+          <JSONTree theme={this.props.theme}
+                    keyName={'action'}
+                    data={payload}
+                    expandRoot={this.props.expandActionRoot} /> : '' }
       </div>
     );
   }

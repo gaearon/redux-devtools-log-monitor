@@ -52,6 +52,8 @@ Name                  | Description
 `theme`               | Either a string referring to one of the themes provided by [redux-devtools-themes](https://github.com/gaearon/redux-devtools-themes) (feel free to contribute!) or a custom object of the same format. Optional. By default, set to [`'nicinabox'`](https://github.com/gaearon/redux-devtools-themes/blob/master/src/nicinabox.js).
 `select`              | A function that selects the slice of the state for DevTools to show. For example, `state => state.thePart.iCare.about`. Optional. By default, set to `state => state`.
 `preserveScrollTop`   | When `true`, records the current scroll top every second so it can be restored on refresh. This only has effect when used together with `persistState()` enhancer from Redux DevTools. By default, set to `true`.
+`expandActionRoot`    | A boolean, if `true`, action root key of JSON tree in DevTools is expanded, otherwise collapsed. By default, set to `true`.
+`expandStateRoot`     | A boolean, if `true`, state root key of JSON tree in DevTools is expanded, otherwise collapsed. By default, set to `true`.
 
 ### License
 
