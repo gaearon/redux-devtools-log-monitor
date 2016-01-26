@@ -67,7 +67,8 @@ export default class LogMonitor extends Component {
     theme: 'nicinabox',
     preserveScrollTop: true,
     expandActionRoot: true,
-    expandStateRoot: true
+    expandStateRoot: true,
+    reversed: false
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
@@ -170,8 +171,9 @@ export default class LogMonitor extends Component {
 
   render() {
     const elements = [];
+    const reversedElements = [];
     const theme = this.getTheme();
-    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
+    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select, reversed } = this.props;
 
     for (let i = 0; i < stagedActionIds.length; i++) {
       const actionId = stagedActionIds[i];
@@ -195,6 +197,13 @@ export default class LogMonitor extends Component {
                          expandStateRoot={this.props.expandStateRoot}
                          onActionClick={this.handleToggleAction} />
       );
+    }
+
+    if (reversed) {
+      const end = elements.length - 1;
+      for (let i = end; i >= 0; i--) {
+        reversedElements.push(elements[i]);
+      }
     }
 
     return (
@@ -226,7 +235,7 @@ export default class LogMonitor extends Component {
           </LogMonitorButton>
         </div>
         <div style={styles.elements} ref='container'>
-          {elements}
+          {reversedElements.length > 0 ? reversedElements : elements}
         </div>
       </div>
     );

@@ -54,7 +54,7 @@ Name                  | Description
 `preserveScrollTop`   | When `true`, records the current scroll top every second so it can be restored on refresh. This only has effect when used together with `persistState()` enhancer from Redux DevTools. By default, set to `true`.
 `expandActionRoot`    | When `true`, displays the action object expanded rather than collapsed. By default, set to `true`.
 `expandStateRoot`     | When `true`, displays the state object expanded rather than collapsed. By default, set to `true`.
-
+`reversed`     | When `true`, lists state changes in reverse order. The most resent change will be at the top of the list. By default, set to `false`.
 ### License
 
 MIT
