@@ -31,6 +31,7 @@ export default class LogMonitorEntry extends Component {
   constructor(props) {
     super(props);
     this.handleActionClick = this.handleActionClick.bind(this);
+    this.previousState = this.props.previousState || this.props.state;
   }
 
   printState(state, error) {
@@ -42,7 +43,7 @@ export default class LogMonitorEntry extends Component {
             theme={this.props.theme}
             keyName={'state'}
             data={this.props.select(state)}
-            previousData={this.props.select(this.props.previousState)}
+            previousData={this.props.select(this.previousState)}
             expandRoot={this.props.expandStateRoot}
             style={styles.tree} />
         );
