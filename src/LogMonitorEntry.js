@@ -42,7 +42,11 @@ export default class LogMonitorEntry extends Component {
             theme={this.props.theme}
             keyName={'state'}
             data={this.props.select(state)}
-            previousData={this.props.select(this.props.previousState)}
+            previousData={
+              typeof this.props.previousState !== 'undefined' ?
+                this.props.select(this.props.previousState) :
+                undefined
+            }
             expandRoot={this.props.expandStateRoot}
             style={styles.tree} />
         );
