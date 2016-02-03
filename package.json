@@ -1,6 +1,6 @@
 {
   "name": "redux-devtools-log-monitor",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "The default tree view monitor for Redux DevTools",
   "main": "lib/index.js",
   "scripts": {
