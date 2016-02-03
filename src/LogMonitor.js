@@ -81,6 +81,18 @@ export default class LogMonitor extends Component {
     this.handleCommit = this.handleCommit.bind(this);
   }
 
+  scroll() {
+    const node = this.refs.container;
+    if (!node) {
+      return;
+    }
+    if (this.scrollDown) {
+      const { offsetHeight, scrollHeight } = node;
+      node.scrollTop = scrollHeight - offsetHeight;
+      this.scrollDown = false;
+    }
+  }
+
   componentDidMount() {
     const node = this.refs.container;
     if (!node) {
@@ -90,6 +102,9 @@ export default class LogMonitor extends Component {
     if (this.props.preserveScrollTop) {
       node.scrollTop = this.props.monitorState.initialScrollTop;
       this.interval = setInterval(::this.updateScrollTop, 1000);
+    } else {
+      this.scrollDown = true;
+      this.scroll();
     }
   }
 
@@ -123,15 +138,7 @@ export default class LogMonitor extends Component {
   }
 
   componentDidUpdate() {
-    const node = this.refs.container;
-    if (!node) {
-      return;
-    }
-    if (this.scrollDown) {
-      const { offsetHeight, scrollHeight } = node;
-      node.scrollTop = scrollHeight - offsetHeight;
-      this.scrollDown = false;
-    }
+    this.scroll();
   }
 
   handleRollback() {
