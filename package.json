@@ -3,6 +3,10 @@
   "version": "1.0.4",
   "description": "The default tree view monitor for Redux DevTools",
   "main": "lib/index.js",
+  "files": [
+    "lib",
+    "src"
+  ],
   "scripts": {
     "clean": "rimraf lib",
     "build": "babel src --out-dir lib",
