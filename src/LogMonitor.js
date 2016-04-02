@@ -50,7 +50,7 @@ export default class LogMonitor extends Component {
     skippedActionIds: PropTypes.array,
     monitorState: PropTypes.shape({
       initialScrollTop: PropTypes.number
-    }).isRequired,
+    }),
 
     preserveScrollTop: PropTypes.bool,
     select: PropTypes.func.isRequired,
