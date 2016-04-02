@@ -40,7 +40,7 @@ export default class LogMonitorEntry extends Component {
         return (
           <JSONTree
             theme={this.props.theme}
-            keyName={'state'}
+            keyPath={['state']}
             data={this.props.select(state)}
             previousData={
               typeof this.props.previousState !== 'undefined' ?

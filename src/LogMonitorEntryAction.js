@@ -22,7 +22,7 @@ export default class LogMonitorAction extends Component {
       }}>
         { Object.keys(payload).length > 0 ?
           <JSONTree theme={this.props.theme}
-                    keyName={'action'}
+                    keyPath={['action']}
                     data={payload}
                     expandRoot={this.props.expandActionRoot} /> : '' }
       </div>
