@@ -7,7 +7,7 @@ import { ActionCreators } from 'redux-devtools';
 import { updateScrollTop } from './actions';
 import reducer from './reducers';
 
-const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
+const { reset, rollback, commit, sweep, toggleAction, setActionsActive } = ActionCreators;
 
 const styles = {
   container: {
@@ -72,6 +72,10 @@ export default class LogMonitor extends Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
+  state = {
+    toggleStart: null
+  }
+
   constructor(props) {
     super(props);
     this.handleToggleAction = this.handleToggleAction.bind(this);
@@ -135,6 +139,11 @@ export default class LogMonitor extends Component {
     } else {
       this.scrollDown = false;
     }
+
+    const { toggleStart } = this.props;
+    if (toggleStart !== null) {
+      this.setState({ toggleStart: null });
+    }
   }
 
   componentDidUpdate() {
@@ -155,6 +164,19 @@ export default class LogMonitor extends Component {
 
   handleToggleAction(id) {
     this.props.dispatch(toggleAction(id));
+  }
+
+  handleToggleConsecutiveAction(id) {
+    const { toggleStart } = this.state;
+    if (toggleStart !== null) {
+      const { skippedActionIds } = this.props;
+      const start = Math.min(toggleStart, id);
+      const end = Math.max(toggleStart, id);
+      const active = skippedActionIds.indexOf(toggleStart) > -1;
+      this.props.dispatch(setActionsActive(start, end, active));
+    } else {
+      this.setState({ toggleStart: id });
+    }
   }
 
   handleReset() {
@@ -200,7 +222,8 @@ export default class LogMonitor extends Component {
                          error={error}
                          expandActionRoot={this.props.expandActionRoot}
                          expandStateRoot={this.props.expandStateRoot}
-                         onActionClick={this.handleToggleAction} />
+                         onActionClick={this.handleToggleAction}
+                         onActionShiftClick={this.handleToggleConsecutiveAction} />
       );
     }
 
