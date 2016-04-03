@@ -201,6 +201,7 @@ export default class LogMonitor extends Component {
     const elements = [];
     const theme = this.getTheme();
     const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
+    const { toggleStart } = this.state;
 
     for (let i = 0; i < stagedActionIds.length; i++) {
       const actionId = stagedActionIds[i];
@@ -219,6 +220,7 @@ export default class LogMonitor extends Component {
                          state={state}
                          previousState={previousState}
                          collapsed={skippedActionIds.indexOf(actionId) > -1}
+                         selected={toggleStart === i}
                          error={error}
                          expandActionRoot={this.props.expandActionRoot}
                          expandStateRoot={this.props.expandStateRoot}
