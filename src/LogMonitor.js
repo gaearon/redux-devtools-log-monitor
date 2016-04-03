@@ -8,7 +8,7 @@ import reducer from './reducers';
 import LogMonitorEntryList from './LogMonitorEntryList';
 import debounce from 'lodash.debounce';
 
-const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
+const { reset, rollback, commit, sweep, toggleAction, importState } = ActionCreators;
 
 const styles = {
   container: {
@@ -85,6 +85,8 @@ export default class LogMonitor extends Component {
     this.handleRollback = this.handleRollback.bind(this);
     this.handleSweep = this.handleSweep.bind(this);
     this.handleCommit = this.handleCommit.bind(this);
+    this.handleExport = this.handleExport.bind(this);
+    this.handleImport = this.handleImport.bind(this);
   }
 
   scroll() {
@@ -163,6 +165,26 @@ export default class LogMonitor extends Component {
     this.props.dispatch(reset());
   }
 
+  handleImport() {
+    const localStorageReduxStore = JSON.parse(window.localStorage.getItem('redux-store'))
+    this.props.dispatch(importState(localStorageReduxStore))
+  }
+
+  handleExport() {
+    const reduxStoreLogInformation = {
+      monitorState: this.props.monitorState,
+      actionsById: this.props.actionsById,
+      nextActionId: this.props.nextActionId,
+      stagedActionIds: this.props.stagedActionIds,
+      skippedActionIds: this.props.skippedActionIds,
+      committedState: this.props.committedState,
+      currentStateIndex: this.props.currentStateIndex,
+      computedStates: this.props.computedStates
+    }
+
+    window.localStorage.setItem('redux-store', JSON.stringify(reduxStoreLogInformation))
+  }
+
   getTheme() {
     let { theme } = this.props;
     if (typeof theme !== 'string') {
@@ -227,6 +249,18 @@ export default class LogMonitor extends Component {
             onClick={this.handleCommit}
             enabled={computedStates.length > 1}>
             Commit
+          </LogMonitorButton>
+          <LogMonitorButton
+            theme={theme}
+            onClick={this.handleImport}
+            enabled={true}>
+            Import
+          </LogMonitorButton>
+          <LogMonitorButton
+            theme={theme}
+            onClick={this.handleExport}
+            enabled={stagedActionIds.length > 0}>
+            Export
           </LogMonitorButton>
         </div>
         <div style={styles.elements} ref='container'>
