@@ -44,6 +44,8 @@ export default class LogMonitor extends Component {
   static update = reducer;
 
   static propTypes = {
+    exportStorage: PropTypes.func,
+    importStorage: PropTypes.func,
     dispatch: PropTypes.func,
     computedStates: PropTypes.array,
     actionsById: PropTypes.object,
@@ -166,8 +168,8 @@ export default class LogMonitor extends Component {
   }
 
   handleImport() {
-    const localStorageReduxStore = JSON.parse(window.localStorage.getItem('redux-store'))
-    this.props.dispatch(importState(localStorageReduxStore))
+    const { dispatch, importStorage } = this.props
+    dispatch(importState(importStorage()))
   }
 
   handleExport() {
@@ -182,7 +184,7 @@ export default class LogMonitor extends Component {
       computedStates: this.props.computedStates
     }
 
-    window.localStorage.setItem('redux-store', JSON.stringify(reduxStoreLogInformation))
+    this.props.exportStorage(reduxStoreLogInformation)
   }
 
   getTheme() {
@@ -253,13 +255,13 @@ export default class LogMonitor extends Component {
           <LogMonitorButton
             theme={theme}
             onClick={this.handleImport}
-            enabled={true}>
+            enabled={importStorage}>
             Import
           </LogMonitorButton>
           <LogMonitorButton
             theme={theme}
             onClick={this.handleExport}
-            enabled={stagedActionIds.length > 0}>
+            enabled={exportStorage && stagedActionIds.length > 0}>
             Export
           </LogMonitorButton>
         </div>
