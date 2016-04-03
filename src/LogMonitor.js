@@ -1,11 +1,11 @@
 import React, { PropTypes, Component } from 'react';
-import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import * as themes from 'redux-devtools-themes';
 import { ActionCreators } from 'redux-devtools';
 import { updateScrollTop } from './actions';
 import reducer from './reducers';
+import LogMonitorEntryList from './LogMonitorEntryList';
 
 const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
 
@@ -37,6 +37,14 @@ const styles = {
     overflowX: 'hidden',
     overflowY: 'auto'
   }
+};
+
+const debounced = (func, wait) => {
+  let timeout;
+  return () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(func, wait);
+  };
 };
 
 export default class LogMonitor extends Component {
@@ -72,6 +80,11 @@ export default class LogMonitor extends Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
+  updateScrollTop = debounced(() => {
+    const node = this.refs.container;
+    this.props.dispatch(updateScrollTop(node ? node.scrollTop : 0));
+  }, 500);
+
   constructor(props) {
     super(props);
     this.handleToggleAction = this.handleToggleAction.bind(this);
@@ -101,7 +114,7 @@ export default class LogMonitor extends Component {
 
     if (this.props.preserveScrollTop) {
       node.scrollTop = this.props.monitorState.initialScrollTop;
-      this.interval = setInterval(::this.updateScrollTop, 1000);
+      node.addEventListener('scroll', this.updateScrollTop);
     } else {
       this.scrollDown = true;
       this.scroll();
@@ -109,14 +122,10 @@ export default class LogMonitor extends Component {
   }
 
   componentWillUnmount() {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-  }
-
-  updateScrollTop() {
     const node = this.refs.container;
-    this.props.dispatch(updateScrollTop(node ? node.scrollTop : 0));
+    if (node && this.props.preserveScrollTop) {
+      node.addEventListener('scroll', this.updateScrollTop);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -176,33 +185,28 @@ export default class LogMonitor extends Component {
   }
 
   render() {
-    const elements = [];
     const theme = this.getTheme();
-    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
+    const {
+      actionsById,
+      skippedActionIds,
+      stagedActionIds,
+      computedStates,
+      select,
+      expandActionRoot,
+      expandStateRoot
+      } = this.props;
 
-    for (let i = 0; i < stagedActionIds.length; i++) {
-      const actionId = stagedActionIds[i];
-      const action = actionsById[actionId].action;
-      const { state, error } = computedStates[i];
-      let previousState;
-      if (i > 0) {
-        previousState = computedStates[i - 1].state;
-      }
-      elements.push(
-        <LogMonitorEntry key={actionId}
-                         theme={theme}
-                         select={select}
-                         action={action}
-                         actionId={actionId}
-                         state={state}
-                         previousState={previousState}
-                         collapsed={skippedActionIds.indexOf(actionId) > -1}
-                         error={error}
-                         expandActionRoot={this.props.expandActionRoot}
-                         expandStateRoot={this.props.expandStateRoot}
-                         onActionClick={this.handleToggleAction} />
-      );
-    }
+    const entryListProps = {
+      theme,
+      actionsById,
+      skippedActionIds,
+      stagedActionIds,
+      computedStates,
+      select,
+      expandActionRoot,
+      expandStateRoot,
+      onActionClick: this.handleToggleAction
+    };
 
     return (
       <div style={{...styles.container, backgroundColor: theme.base00}}>
@@ -233,7 +237,7 @@ export default class LogMonitor extends Component {
           </LogMonitorButton>
         </div>
         <div style={styles.elements} ref='container'>
-          {elements}
+          <LogMonitorEntryList {...entryListProps} />
         </div>
       </div>
     );
