@@ -10,7 +10,7 @@ function initialScrollTop(props, state = 0, action) {
     state;
 }
 
-function startConsecutiveToggle(props, state = null, action) {
+function startConsecutiveToggle(props, state, action) {
   return action.type === START_CONSECUTIVE_TOGGLE ?
     action.id :
     null;

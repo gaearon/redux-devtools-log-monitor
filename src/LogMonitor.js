@@ -80,6 +80,7 @@ export default class LogMonitor extends Component {
     this.handleRollback = this.handleRollback.bind(this);
     this.handleSweep = this.handleSweep.bind(this);
     this.handleCommit = this.handleCommit.bind(this);
+    this.handleToggleConsecutiveAction = this.handleToggleConsecutiveAction.bind(this);
   }
 
   scroll() {
@@ -160,7 +161,7 @@ export default class LogMonitor extends Component {
 
   handleToggleConsecutiveAction(id) {
     const { consecutiveToggleStartId } = this.props.monitorState;
-    if (consecutiveToggleStartId !== null) {
+    if (consecutiveToggleStartId > -1) {
       const { skippedActionIds } = this.props;
       const start = Math.min(consecutiveToggleStartId, id);
       const end = Math.max(consecutiveToggleStartId, id);
@@ -193,7 +194,7 @@ export default class LogMonitor extends Component {
     const elements = [];
     const theme = this.getTheme();
     const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
-    const { toggleStart } = this.state;
+    const { consecutiveToggleStartId } = this.props.monitorState;
 
     for (let i = 0; i < stagedActionIds.length; i++) {
       const actionId = stagedActionIds[i];
@@ -212,7 +213,7 @@ export default class LogMonitor extends Component {
                          state={state}
                          previousState={previousState}
                          collapsed={skippedActionIds.indexOf(actionId) > -1}
-                         selected={toggleStart === i}
+                         selected={consecutiveToggleStartId === i}
                          error={error}
                          expandActionRoot={this.props.expandActionRoot}
                          expandStateRoot={this.props.expandStateRoot}
