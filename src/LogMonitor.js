@@ -4,7 +4,7 @@ import LogMonitorButton from './LogMonitorButton';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import * as themes from 'redux-devtools-themes';
 import { ActionCreators } from 'redux-devtools';
-import { updateScrollTop } from './actions';
+import { updateScrollTop, startConsecutiveToggle } from './actions';
 import reducer from './reducers';
 
 const { reset, rollback, commit, sweep, toggleAction, setActionsActive } = ActionCreators;
@@ -49,7 +49,8 @@ export default class LogMonitor extends Component {
     stagedActionIds: PropTypes.array,
     skippedActionIds: PropTypes.array,
     monitorState: PropTypes.shape({
-      initialScrollTop: PropTypes.number
+      initialScrollTop: PropTypes.number,
+      consecutiveToggleStartId: PropTypes.number
     }),
 
     preserveScrollTop: PropTypes.bool,
@@ -71,10 +72,6 @@ export default class LogMonitor extends Component {
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
-
-  state = {
-    toggleStart: null
-  }
 
   constructor(props) {
     super(props);
@@ -139,11 +136,6 @@ export default class LogMonitor extends Component {
     } else {
       this.scrollDown = false;
     }
-
-    const { toggleStart } = this.props;
-    if (toggleStart !== null) {
-      this.setState({ toggleStart: null });
-    }
   }
 
   componentDidUpdate() {
@@ -167,15 +159,15 @@ export default class LogMonitor extends Component {
   }
 
   handleToggleConsecutiveAction(id) {
-    const { toggleStart } = this.state;
-    if (toggleStart !== null) {
+    const { consecutiveToggleStartId } = this.props.monitorState;
+    if (consecutiveToggleStartId !== null) {
       const { skippedActionIds } = this.props;
-      const start = Math.min(toggleStart, id);
-      const end = Math.max(toggleStart, id);
-      const active = skippedActionIds.indexOf(toggleStart) > -1;
+      const start = Math.min(consecutiveToggleStartId, id);
+      const end = Math.max(consecutiveToggleStartId, id);
+      const active = skippedActionIds.indexOf(consecutiveToggleStartId) > -1;
       this.props.dispatch(setActionsActive(start, end, active));
     } else {
-      this.setState({ toggleStart: id });
+      this.props.dispatch(startConsecutiveToggle(id));
     }
   }
 
