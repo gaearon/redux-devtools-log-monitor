@@ -124,7 +124,7 @@ export default class LogMonitor extends Component {
   componentWillUnmount() {
     const node = this.refs.container;
     if (node && this.props.preserveScrollTop) {
-      node.addEventListener('scroll', this.updateScrollTop);
+      node.removeEventListener('scroll', this.updateScrollTop);
     }
   }
 
