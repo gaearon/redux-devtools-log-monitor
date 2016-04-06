@@ -19,6 +19,9 @@ export default class LogMonitorEntry extends Component {
     action: PropTypes.object.isRequired,
     actionId: PropTypes.number.isRequired,
     select: PropTypes.func.isRequired,
+    density: PropTypes.oneOf(['comfortable',
+      'cozy',
+      'compact']),
     error: PropTypes.string,
     onActionClick: PropTypes.func.isRequired,
     collapsed: PropTypes.bool,
@@ -31,6 +34,15 @@ export default class LogMonitorEntry extends Component {
   constructor(props) {
     super(props);
     this.handleActionClick = this.handleActionClick.bind(this);
+  }
+
+  addDensity(style) {
+    const { density } = this.props
+    switch(density) {
+      case 'compact':
+        style.marginTop = 0
+    }
+    return style
   }
 
   printState(state, error) {
@@ -48,7 +60,7 @@ export default class LogMonitorEntry extends Component {
                 undefined
             }
             expandRoot={this.props.expandStateRoot}
-            style={styles.tree} />
+            style={this.addDensity(styles.tree)} />
         );
       } catch (err) {
         errorText = 'Error selecting state.';
@@ -93,6 +105,7 @@ export default class LogMonitorEntry extends Component {
           action={action}
           expandActionRoot={this.props.expandActionRoot}
           onClick={this.handleActionClick}
+          density={this.props.density}
           style={{...styles.entry, ...styleEntry}}/>
         {!collapsed &&
           <div>
