@@ -48,6 +48,9 @@ export default class LogMonitor extends Component {
     actionsById: PropTypes.object,
     stagedActionIds: PropTypes.array,
     skippedActionIds: PropTypes.array,
+    density: PropTypes.oneOf(['comfortable',
+      'cozy',
+      'compact']),
     monitorState: PropTypes.shape({
       initialScrollTop: PropTypes.number
     }),
@@ -197,6 +200,7 @@ export default class LogMonitor extends Component {
                          state={state}
                          previousState={previousState}
                          collapsed={skippedActionIds.indexOf(actionId) > -1}
+                         density={this.props.density}
                          error={error}
                          expandActionRoot={this.props.expandActionRoot}
                          expandStateRoot={this.props.expandStateRoot}

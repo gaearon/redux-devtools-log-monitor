@@ -10,10 +10,33 @@ const styles = {
   payload: {
     margin: 0,
     overflow: 'auto'
-  }
+  },
+  tree: {}
 };
 
 export default class LogMonitorAction extends Component {
+
+  addDensity(style) {
+    const { density } = this.props
+    switch(density) {
+      case 'compact': {
+        style.marginTop = 0
+        style.marginBottom = 0
+        break
+      }
+      case 'cozy': {
+        style.marginTop = 16
+        style.marginBottom = 16
+        break
+      }
+      default: {
+        style.marginTop = 8
+        style.marginBottom = 8
+      }
+    }
+    return style
+  }
+
   renderPayload(payload) {
     return (
       <div style={{
@@ -24,7 +47,8 @@ export default class LogMonitorAction extends Component {
           <JSONTree theme={this.props.theme}
                     keyPath={['action']}
                     data={payload}
-                    expandRoot={this.props.expandActionRoot} /> : '' }
+                    expandRoot={this.props.expandActionRoot}
+                    style={this.addDensity(styles.tree)} /> : '' }
       </div>
     );
   }
