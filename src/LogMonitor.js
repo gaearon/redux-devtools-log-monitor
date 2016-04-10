@@ -6,6 +6,7 @@ import { ActionCreators } from 'redux-devtools';
 import { updateScrollTop } from './actions';
 import reducer from './reducers';
 import LogMonitorEntryList from './LogMonitorEntryList';
+import debounce from 'lodash.debounce';
 
 const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
 
@@ -37,14 +38,6 @@ const styles = {
     overflowX: 'hidden',
     overflowY: 'auto'
   }
-};
-
-const debounced = (func, wait) => {
-  let timeout;
-  return () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(func, wait);
-  };
 };
 
 export default class LogMonitor extends Component {
@@ -80,7 +73,7 @@ export default class LogMonitor extends Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
-  updateScrollTop = debounced(() => {
+  updateScrollTop = debounce(() => {
     const node = this.refs.container;
     this.props.dispatch(updateScrollTop(node ? node.scrollTop : 0));
   }, 500);
