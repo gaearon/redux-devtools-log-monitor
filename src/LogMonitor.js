@@ -161,13 +161,13 @@ export default class LogMonitor extends Component {
 
   handleToggleConsecutiveAction(id) {
     const { consecutiveToggleStartId } = this.props.monitorState;
-    if (consecutiveToggleStartId > -1) {
+    if (consecutiveToggleStartId) {
       const { skippedActionIds } = this.props;
       const start = Math.min(consecutiveToggleStartId, id);
       const end = Math.max(consecutiveToggleStartId, id);
       const active = skippedActionIds.indexOf(consecutiveToggleStartId) > -1;
       this.props.dispatch(setActionsActive(start, end, active));
-    } else {
+    } else if (id > 0) {
       this.props.dispatch(startConsecutiveToggle(id));
     }
   }
