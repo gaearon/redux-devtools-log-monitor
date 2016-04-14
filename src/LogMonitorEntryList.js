@@ -3,7 +3,6 @@ import LogMonitorEntry from './LogMonitorEntry';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 
 export default class LogMonitorEntryList extends Component {
-
   static propTypes = {
     actionsById: PropTypes.object,
     computedStates: PropTypes.array,
@@ -34,7 +33,7 @@ export default class LogMonitorEntryList extends Component {
       expandActionRoot,
       expandStateRoot,
       onActionClick
-      } = this.props;
+    } = this.props;
 
     for (let i = 0; i < stagedActionIds.length; i++) {
       const actionId = stagedActionIds[i];
@@ -60,8 +59,10 @@ export default class LogMonitorEntryList extends Component {
       );
     }
 
-    return (<div>
-      {elements}
-    </div>);
+    return (
+      <div>
+        {elements}
+      </div>
+    );
   }
 }
