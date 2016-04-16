@@ -47,7 +47,7 @@ export default class LogMonitorEntry extends Component {
                 this.props.select(this.props.previousState) :
                 undefined
             }
-            expandRoot={this.props.expandStateRoot}
+            shouldExpandNode={() => this.props.expandStateRoot}
             style={styles.tree} />
         );
       } catch (err) {

@@ -24,7 +24,7 @@ export default class LogMonitorAction extends Component {
           <JSONTree theme={this.props.theme}
                     keyPath={['action']}
                     data={payload}
-                    expandRoot={this.props.expandActionRoot} /> : '' }
+                    shouldExpandNode={() => this.props.expandActionRoot} /> : '' }
       </div>
     );
   }
