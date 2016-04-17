@@ -31,6 +31,7 @@ export default class LogMonitorEntry extends Component {
   constructor(props) {
     super(props);
     this.handleActionClick = this.handleActionClick.bind(this);
+    this.shouldExpandNode = this.shouldExpandNode.bind(this);
   }
 
   printState(state, error) {
@@ -47,7 +48,7 @@ export default class LogMonitorEntry extends Component {
                 this.props.select(this.props.previousState) :
                 undefined
             }
-            expandRoot={this.props.expandStateRoot}
+            shouldExpandNode={this.shouldExpandNode}
             style={styles.tree} />
         );
       } catch (err) {
@@ -73,6 +74,10 @@ export default class LogMonitorEntry extends Component {
     if (actionId > 0) {
       onActionClick(actionId);
     }
+  }
+
+  shouldExpandNode() {
+    return this.props.expandStateRoot;
   }
 
   render() {
