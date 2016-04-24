@@ -8,9 +8,21 @@ const styles = {
     display: 'block',
     WebkitUserSelect: 'none'
   },
-  tree: {
-    paddingLeft: 0
+
+  root: {
+    marginLeft: 0
+  },
+
+  changedData: {
+    backgroundColor: 'rgba(128, 128, 128, 0.3)'
   }
+};
+
+const getDeepItem = (data, path) => path.reduce((obj, key) => obj && obj[key], data);
+const dataIsEqual = (data, previousData, keyPath) => {
+  const path = [...keyPath].reverse().slice(1);
+
+  return getDeepItem(data, path) === getDeepItem(previousData, path);
 };
 
 export default class LogMonitorEntry extends Component {
@@ -38,18 +50,35 @@ export default class LogMonitorEntry extends Component {
     let errorText = error;
     if (!errorText) {
       try {
+        const data = this.props.select(state);
+        const previousData = typeof this.props.previousState !== 'undefined' ?
+          this.props.select(this.props.previousState) :
+          undefined;
+        const getValueStyle = ({ style }, nodeType, keyPath) => ({
+          style: {
+            ...style,
+            ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
+          }
+        });
+        const getNestedNodeStyle = ({ style }, nodeType, expanded, keyPath) => ({
+          style: {
+            ...style,
+            ...(keyPath.length > 1 ? {} : styles.root)
+          }
+        });
+
         return (
           <JSONTree
-            theme={this.props.theme}
+            theme={{
+              extend: this.props.theme,
+              tree: styles.tree,
+              value: getValueStyle,
+              nestedNode: getNestedNodeStyle
+            }}
+            data={data}
+            isLightTheme={false}
             keyPath={['state']}
-            data={this.props.select(state)}
-            previousData={
-              typeof this.props.previousState !== 'undefined' ?
-                this.props.select(this.props.previousState) :
-                undefined
-            }
-            shouldExpandNode={this.shouldExpandNode}
-            style={styles.tree} />
+            shouldExpandNode={this.shouldExpandNode} />
         );
       } catch (err) {
         errorText = 'Error selecting state.';
