@@ -44,8 +44,6 @@ export default class LogMonitor extends Component {
   static update = reducer;
 
   static propTypes = {
-    exportStorage: PropTypes.func,
-    importStorage: PropTypes.func,
     dispatch: PropTypes.func,
     computedStates: PropTypes.array,
     actionsById: PropTypes.object,
@@ -62,7 +60,9 @@ export default class LogMonitor extends Component {
       PropTypes.string
     ]),
     expandActionRoot: PropTypes.bool,
-    expandStateRoot: PropTypes.bool
+    expandStateRoot: PropTypes.bool,
+    exportStorage: PropTypes.func,
+    importStorage: PropTypes.func
   };
 
   static defaultProps = {
@@ -168,8 +168,8 @@ export default class LogMonitor extends Component {
   }
 
   handleImport() {
-    const { dispatch, importStorage } = this.props
-    dispatch(importState(importStorage()))
+    const { dispatch, importStorage } = this.props;
+    dispatch(importState(importStorage()));
   }
 
   handleExport() {
@@ -180,11 +180,10 @@ export default class LogMonitor extends Component {
       stagedActionIds: this.props.stagedActionIds,
       skippedActionIds: this.props.skippedActionIds,
       committedState: this.props.committedState,
-      currentStateIndex: this.props.currentStateIndex,
-      computedStates: this.props.computedStates
-    }
+      currentStateIndex: this.props.currentStateIndex
+    };
 
-    this.props.exportStorage(reduxStoreLogInformation)
+    this.props.exportStorage(reduxStoreLogInformation);
   }
 
   getTheme() {
@@ -210,7 +209,9 @@ export default class LogMonitor extends Component {
       computedStates,
       select,
       expandActionRoot,
-      expandStateRoot
+      expandStateRoot,
+      importStorage,
+      exportStorage
       } = this.props;
 
     const entryListProps = {
@@ -252,18 +253,22 @@ export default class LogMonitor extends Component {
             enabled={computedStates.length > 1}>
             Commit
           </LogMonitorButton>
-          <LogMonitorButton
-            theme={theme}
-            onClick={this.handleImport}
-            enabled={importStorage}>
-            Import
-          </LogMonitorButton>
-          <LogMonitorButton
-            theme={theme}
-            onClick={this.handleExport}
-            enabled={exportStorage && stagedActionIds.length > 0}>
-            Export
-          </LogMonitorButton>
+          {importStorage &&
+            <LogMonitorButton
+              theme={theme}
+              onClick={this.handleImport}
+              enabled={importStorage}>
+              Import
+            </LogMonitorButton>
+          }
+          {exportStorage &&
+            <LogMonitorButton
+              theme={theme}
+              onClick={this.handleExport}
+              enabled={exportStorage && stagedActionIds.length > 0}>
+              Export
+            </LogMonitorButton>
+          }
         </div>
         <div style={styles.elements} ref='container'>
           <LogMonitorEntryList {...entryListProps} />
