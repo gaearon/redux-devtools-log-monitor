@@ -8,7 +8,7 @@ import reducer from './reducers';
 import LogMonitorEntryList from './LogMonitorEntryList';
 import debounce from 'lodash.debounce';
 
-const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
+const { reset, rollback, commit, sweep, toggleAction, importState } = ActionCreators;
 
 const styles = {
   container: {
@@ -60,7 +60,9 @@ export default class LogMonitor extends Component {
       PropTypes.string
     ]),
     expandActionRoot: PropTypes.bool,
-    expandStateRoot: PropTypes.bool
+    expandStateRoot: PropTypes.bool,
+    exportStorage: PropTypes.func,
+    importStorage: PropTypes.func
   };
 
   static defaultProps = {
@@ -85,6 +87,8 @@ export default class LogMonitor extends Component {
     this.handleRollback = this.handleRollback.bind(this);
     this.handleSweep = this.handleSweep.bind(this);
     this.handleCommit = this.handleCommit.bind(this);
+    this.handleExport = this.handleExport.bind(this);
+    this.handleImport = this.handleImport.bind(this);
   }
 
   scroll() {
@@ -163,6 +167,25 @@ export default class LogMonitor extends Component {
     this.props.dispatch(reset());
   }
 
+  handleImport() {
+    const { dispatch, importStorage } = this.props;
+    dispatch(importState(importStorage()));
+  }
+
+  handleExport() {
+    const reduxStoreLogInformation = {
+      monitorState: this.props.monitorState,
+      actionsById: this.props.actionsById,
+      nextActionId: this.props.nextActionId,
+      stagedActionIds: this.props.stagedActionIds,
+      skippedActionIds: this.props.skippedActionIds,
+      committedState: this.props.committedState,
+      currentStateIndex: this.props.currentStateIndex
+    };
+
+    this.props.exportStorage(reduxStoreLogInformation);
+  }
+
   getTheme() {
     let { theme } = this.props;
     if (typeof theme !== 'string') {
@@ -186,7 +209,9 @@ export default class LogMonitor extends Component {
       computedStates,
       select,
       expandActionRoot,
-      expandStateRoot
+      expandStateRoot,
+      importStorage,
+      exportStorage
       } = this.props;
 
     const entryListProps = {
@@ -228,6 +253,22 @@ export default class LogMonitor extends Component {
             enabled={computedStates.length > 1}>
             Commit
           </LogMonitorButton>
+          {importStorage &&
+            <LogMonitorButton
+              theme={theme}
+              onClick={this.handleImport}
+              enabled={importStorage}>
+              Import
+            </LogMonitorButton>
+          }
+          {exportStorage &&
+            <LogMonitorButton
+              theme={theme}
+              onClick={this.handleExport}
+              enabled={exportStorage && stagedActionIds.length > 0}>
+              Export
+            </LogMonitorButton>
+          }
         </div>
         <div style={styles.elements} ref='container'>
           <LogMonitorEntryList {...entryListProps} />

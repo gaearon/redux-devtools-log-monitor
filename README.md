@@ -16,15 +16,41 @@ npm install --save-dev redux-devtools-log-monitor
 
 You can use `LogMonitor` as the only monitor in your app:
 
-##### `containers/DevTools.js`
+##### `Basic Usage`
 
 ```js
+// containers/DevTools.js
 import React from 'react';
 import { createDevTools } from 'redux-devtools';
 import LogMonitor from 'redux-devtools-log-monitor';
 
 export default createDevTools(
   <LogMonitor />
+);
+```
+
+##### `Usage with importing and exporting functionality`
+
+```js
+// containers/DevTools.js
+import React from 'react';
+import { createDevTools } from 'redux-devtools';
+import LogMonitor from 'redux-devtools-log-monitor';
+
+function exportStorage(store) {
+  window.localStorage.setItem('redux-store', JSON.stringify(store))
+}
+
+function importStorage() {
+  const saved-redux-store = window.localStorage.getItem('redux-store')
+  return JSON.parse(saved-redux-store)
+}
+
+export default createDevTools(
+  <LogMonitor
+    exportStorage={exportStorage}
+    importStorage={importStorage}
+  />
 );
 ```
 
@@ -54,6 +80,8 @@ Name                  | Description
 `preserveScrollTop`   | When `true`, records the current scroll top every second so it can be restored on refresh. This only has effect when used together with `persistState()` enhancer from Redux DevTools. By default, set to `true`.
 `expandActionRoot`    | When `true`, displays the action object expanded rather than collapsed. By default, set to `true`.
 `expandStateRoot`     | When `true`, displays the state object expanded rather than collapsed. By default, set to `true`.
+`exportStorage`    | When `defined`, `Export` button is enabled. When `Export` button is pressed, `exportStorage` will be called. By default, `exportStorage` is `undefined` and `Export` button is `disabled`.
+`importStorage`    | When `defined`, `Import` button is enabled. When `Import` button is pressed, `importStorage` will be called. By default, `importStorage` is `undefined` and `Import` button is `disabled`.
 
 ### License
 
