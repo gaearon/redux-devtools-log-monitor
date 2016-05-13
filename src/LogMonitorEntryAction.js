@@ -48,7 +48,7 @@ export default class LogMonitorAction extends Component {
       }}>
         <div style={styles.actionBar}
           onClick={this.props.onClick}>
-          {type.toString()}
+          {type !== null && type.toString()}
         </div>
         {!this.props.collapsed ? this.renderPayload(payload) : ''}
       </div>
