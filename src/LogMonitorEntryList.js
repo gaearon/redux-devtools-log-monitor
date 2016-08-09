@@ -8,6 +8,7 @@ export default class LogMonitorEntryList extends Component {
     computedStates: PropTypes.array,
     stagedActionIds: PropTypes.array,
     skippedActionIds: PropTypes.array,
+    currentStateIndex: PropTypes.number,
 
     select: PropTypes.func.isRequired,
     onActionClick: PropTypes.func.isRequired,
@@ -27,6 +28,7 @@ export default class LogMonitorEntryList extends Component {
       theme,
       actionsById,
       computedStates,
+      currentStateIndex,
       select,
       skippedActionIds,
       stagedActionIds,
@@ -52,6 +54,7 @@ export default class LogMonitorEntryList extends Component {
           state={state}
           previousState={previousState}
           collapsed={skippedActionIds.indexOf(actionId) > -1}
+          inFuture={i > currentStateIndex}
           error={error}
           expandActionRoot={expandActionRoot}
           expandStateRoot={expandStateRoot}
