@@ -54,7 +54,7 @@ export default class LogMonitor extends Component {
     }),
 
     preserveScrollTop: PropTypes.bool,
-    select: PropTypes.func.isRequired,
+    select: PropTypes.func,
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
