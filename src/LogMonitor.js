@@ -67,8 +67,8 @@ export default class LogMonitor extends Component {
     select: (state) => state,
     theme: 'nicinabox',
     preserveScrollTop: true,
-    expandActionRoot: true,
-    expandStateRoot: true
+    expandActionRoot: false,
+    expandStateRoot: false
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
