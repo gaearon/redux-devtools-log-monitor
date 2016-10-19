@@ -27,7 +27,7 @@ export default class LogMonitorAction extends Component {
       }}>
         { Object.keys(payload).length > 0 ?
           <JSONTree theme={this.props.theme}
-                    isLightTheme={false}
+                    invertTheme={false}
                     keyPath={['action']}
                     data={payload}
                     shouldExpandNode={this.shouldExpandNode} /> : '' }

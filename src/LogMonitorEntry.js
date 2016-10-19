@@ -60,7 +60,7 @@ export default class LogMonitorEntry extends Component {
             ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
           }
         });
-        const getNestedNodeStyle = ({ style }, nodeType, expanded, keyPath) => ({
+        const getNestedNodeStyle = ({ style }, keyPath) => ({
           style: {
             ...style,
             ...(keyPath.length > 1 ? {} : styles.root)
@@ -76,7 +76,7 @@ export default class LogMonitorEntry extends Component {
               nestedNode: getNestedNodeStyle
             }}
             data={data}
-            isLightTheme={false}
+            invertTheme={false}
             keyPath={['state']}
             shouldExpandNode={this.shouldExpandNode} />
         );
