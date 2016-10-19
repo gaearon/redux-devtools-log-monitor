@@ -129,7 +129,7 @@ export default class LogMonitorEntry extends Component {
           onClick={this.handleActionClick}
           style={{...styles.entry, ...styleEntry}}/>
         {!collapsed &&
-          <div>
+          <div style={{ paddingLeft: 16 }}>
             {this.printState(state, error)}
           </div>
         }

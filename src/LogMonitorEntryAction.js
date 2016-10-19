@@ -9,6 +9,7 @@ const styles = {
   },
   payload: {
     margin: 0,
+    paddingLeft: 16,
     overflow: 'auto'
   }
 };
