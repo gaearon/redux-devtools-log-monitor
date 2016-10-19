@@ -60,15 +60,17 @@ export default class LogMonitor extends Component {
       PropTypes.string
     ]),
     expandActionRoot: PropTypes.bool,
-    expandStateRoot: PropTypes.bool
+    expandStateRoot: PropTypes.bool,
+    markStateDiff: PropTypes.bool
   };
 
   static defaultProps = {
     select: (state) => state,
     theme: 'nicinabox',
     preserveScrollTop: true,
-    expandActionRoot: true,
-    expandStateRoot: true
+    expandActionRoot: false,
+    expandStateRoot: false,
+    markStateDiff: false
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
@@ -187,8 +189,9 @@ export default class LogMonitor extends Component {
       currentStateIndex,
       select,
       expandActionRoot,
-      expandStateRoot
-      } = this.props;
+      expandStateRoot,
+      markStateDiff
+    } = this.props;
 
     const entryListProps = {
       theme,
@@ -200,6 +203,7 @@ export default class LogMonitor extends Component {
       select,
       expandActionRoot,
       expandStateRoot,
+      markStateDiff,
       onActionClick: this.handleToggleAction
     };
 

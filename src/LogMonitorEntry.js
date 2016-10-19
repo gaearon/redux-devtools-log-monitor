@@ -52,32 +52,37 @@ export default class LogMonitorEntry extends Component {
     if (!errorText) {
       try {
         const data = this.props.select(state);
-        const previousData = typeof this.props.previousState !== 'undefined' ?
-          this.props.select(this.props.previousState) :
-          undefined;
-        const getValueStyle = ({ style }, nodeType, keyPath) => ({
-          style: {
-            ...style,
-            ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
-          }
-        });
-        const getNestedNodeStyle = ({ style }, nodeType, expanded, keyPath) => ({
-          style: {
-            ...style,
-            ...(keyPath.length > 1 ? {} : styles.root)
-          }
-        });
+        let theme = this.props.theme;
+
+        if (this.props.markStateDiff) {
+          const previousData = typeof this.props.previousState !== 'undefined' ?
+            this.props.select(this.props.previousState) :
+            undefined;
+          const getValueStyle = ({ style }, nodeType, keyPath) => ({
+            style: {
+              ...style,
+              ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
+            }
+          });
+          const getNestedNodeStyle = ({ style }, keyPath) => ({
+            style: {
+              ...style,
+              ...(keyPath.length > 1 ? {} : styles.root)
+            }
+          });
+          theme = {
+            extend: this.props.theme,
+            tree: styles.tree,
+            value: getValueStyle,
+            nestedNode: getNestedNodeStyle
+          };
+        }
 
         return (
           <JSONTree
-            theme={{
-              extend: this.props.theme,
-              tree: styles.tree,
-              value: getValueStyle,
-              nestedNode: getNestedNodeStyle
-            }}
+            theme={theme}
             data={data}
-            isLightTheme={false}
+            invertTheme={false}
             keyPath={['state']}
             shouldExpandNode={this.shouldExpandNode} />
         );
@@ -130,7 +135,7 @@ export default class LogMonitorEntry extends Component {
           onClick={this.handleActionClick}
           style={{...styles.entry, ...styleEntry}}/>
         {!collapsed &&
-          <div>
+          <div style={{ paddingLeft: 16 }}>
             {this.printState(state, error)}
           </div>
         }
