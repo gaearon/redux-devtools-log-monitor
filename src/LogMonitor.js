@@ -184,6 +184,7 @@ export default class LogMonitor extends Component {
       skippedActionIds,
       stagedActionIds,
       computedStates,
+      currentStateIndex,
       select,
       expandActionRoot,
       expandStateRoot
@@ -195,6 +196,7 @@ export default class LogMonitor extends Component {
       skippedActionIds,
       stagedActionIds,
       computedStates,
+      currentStateIndex,
       select,
       expandActionRoot,
       expandStateRoot,

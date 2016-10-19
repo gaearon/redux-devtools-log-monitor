@@ -31,6 +31,7 @@ export default class LogMonitorEntry extends Component {
     action: PropTypes.object.isRequired,
     actionId: PropTypes.number.isRequired,
     select: PropTypes.func.isRequired,
+    inFuture: PropTypes.bool,
     error: PropTypes.string,
     onActionClick: PropTypes.func.isRequired,
     collapsed: PropTypes.bool,
@@ -110,9 +111,9 @@ export default class LogMonitorEntry extends Component {
   }
 
   render() {
-    const { actionId, error, action, state, collapsed } = this.props;
+    const { actionId, error, action, state, collapsed, inFuture } = this.props;
     const styleEntry = {
-      opacity: collapsed ? 0.5 : 1,
+      opacity: (collapsed || inFuture) ? 0.5 : 1,
       cursor: (actionId > 0) ? 'pointer' : 'default'
     };
 
