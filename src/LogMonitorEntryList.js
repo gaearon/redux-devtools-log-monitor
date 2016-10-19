@@ -32,6 +32,7 @@ export default class LogMonitorEntryList extends Component {
       stagedActionIds,
       expandActionRoot,
       expandStateRoot,
+      markStateDiff,
       onActionClick
     } = this.props;
 
@@ -55,6 +56,7 @@ export default class LogMonitorEntryList extends Component {
           error={error}
           expandActionRoot={expandActionRoot}
           expandStateRoot={expandStateRoot}
+          markStateDiff={markStateDiff}
           onActionClick={onActionClick} />
       );
     }

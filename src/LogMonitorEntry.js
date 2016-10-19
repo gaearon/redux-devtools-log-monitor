@@ -51,30 +51,35 @@ export default class LogMonitorEntry extends Component {
     if (!errorText) {
       try {
         const data = this.props.select(state);
-        const previousData = typeof this.props.previousState !== 'undefined' ?
-          this.props.select(this.props.previousState) :
-          undefined;
-        const getValueStyle = ({ style }, nodeType, keyPath) => ({
-          style: {
-            ...style,
-            ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
-          }
-        });
-        const getNestedNodeStyle = ({ style }, keyPath) => ({
-          style: {
-            ...style,
-            ...(keyPath.length > 1 ? {} : styles.root)
-          }
-        });
+        let theme = this.props.theme;
+
+        if (this.props.markStateDiff) {
+          const previousData = typeof this.props.previousState !== 'undefined' ?
+            this.props.select(this.props.previousState) :
+            undefined;
+          const getValueStyle = ({ style }, nodeType, keyPath) => ({
+            style: {
+              ...style,
+              ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
+            }
+          });
+          const getNestedNodeStyle = ({ style }, keyPath) => ({
+            style: {
+              ...style,
+              ...(keyPath.length > 1 ? {} : styles.root)
+            }
+          });
+          theme = {
+            extend: this.props.theme,
+            tree: styles.tree,
+            value: getValueStyle,
+            nestedNode: getNestedNodeStyle
+          };
+        }
 
         return (
           <JSONTree
-            theme={{
-              extend: this.props.theme,
-              tree: styles.tree,
-              value: getValueStyle,
-              nestedNode: getNestedNodeStyle
-            }}
+            theme={theme}
             data={data}
             invertTheme={false}
             keyPath={['state']}
