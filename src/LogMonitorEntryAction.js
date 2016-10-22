@@ -9,11 +9,17 @@ const styles = {
   },
   payload: {
     margin: 0,
+    paddingLeft: 16,
     overflow: 'auto'
   }
 };
 
 export default class LogMonitorAction extends Component {
+  constructor(props) {
+    super(props);
+    this.shouldExpandNode = this.shouldExpandNode.bind(this);
+  }
+
   renderPayload(payload) {
     return (
       <div style={{
@@ -22,11 +28,16 @@ export default class LogMonitorAction extends Component {
       }}>
         { Object.keys(payload).length > 0 ?
           <JSONTree theme={this.props.theme}
+                    invertTheme={false}
                     keyPath={['action']}
                     data={payload}
-                    expandRoot={this.props.expandActionRoot} /> : '' }
+                    shouldExpandNode={this.shouldExpandNode} /> : '' }
       </div>
     );
+  }
+
+  shouldExpandNode() {
+    return this.props.expandActionRoot;
   }
 
   render() {
@@ -39,7 +50,7 @@ export default class LogMonitorAction extends Component {
       }}>
         <div style={styles.actionBar}
           onClick={this.props.onClick}>
-          {type.toString()}
+          {type !== null && type.toString()}
         </div>
         {!this.props.collapsed ? this.renderPayload(payload) : ''}
       </div>

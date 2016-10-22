@@ -1,11 +1,12 @@
 import React, { PropTypes, Component } from 'react';
-import LogMonitorEntry from './LogMonitorEntry';
 import LogMonitorButton from './LogMonitorButton';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import * as themes from 'redux-devtools-themes';
 import { ActionCreators } from 'redux-devtools';
 import { updateScrollTop, startConsecutiveToggle } from './actions';
 import reducer from './reducers';
+import LogMonitorEntryList from './LogMonitorEntryList';
+import debounce from 'lodash.debounce';
 
 const { reset, rollback, commit, sweep, toggleAction, setActionsActive } = ActionCreators;
 
@@ -54,24 +55,31 @@ export default class LogMonitor extends Component {
     }),
 
     preserveScrollTop: PropTypes.bool,
-    select: PropTypes.func.isRequired,
+    select: PropTypes.func,
     theme: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.string
     ]),
     expandActionRoot: PropTypes.bool,
-    expandStateRoot: PropTypes.bool
+    expandStateRoot: PropTypes.bool,
+    markStateDiff: PropTypes.bool
   };
 
   static defaultProps = {
     select: (state) => state,
     theme: 'nicinabox',
     preserveScrollTop: true,
-    expandActionRoot: true,
-    expandStateRoot: true
+    expandActionRoot: false,
+    expandStateRoot: false,
+    markStateDiff: false
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
+
+  updateScrollTop = debounce(() => {
+    const node = this.refs.container;
+    this.props.dispatch(updateScrollTop(node ? node.scrollTop : 0));
+  }, 500);
 
   constructor(props) {
     super(props);
@@ -103,7 +111,7 @@ export default class LogMonitor extends Component {
 
     if (this.props.preserveScrollTop) {
       node.scrollTop = this.props.monitorState.initialScrollTop;
-      this.interval = setInterval(::this.updateScrollTop, 1000);
+      node.addEventListener('scroll', this.updateScrollTop);
     } else {
       this.scrollDown = true;
       this.scroll();
@@ -111,14 +119,10 @@ export default class LogMonitor extends Component {
   }
 
   componentWillUnmount() {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-  }
-
-  updateScrollTop() {
     const node = this.refs.container;
-    this.props.dispatch(updateScrollTop(node ? node.scrollTop : 0));
+    if (node && this.props.preserveScrollTop) {
+      node.removeEventListener('scroll', this.updateScrollTop);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -191,36 +195,36 @@ export default class LogMonitor extends Component {
   }
 
   render() {
-    const elements = [];
     const theme = this.getTheme();
-    const { actionsById, skippedActionIds, stagedActionIds, computedStates, select } = this.props;
     const { consecutiveToggleStartId } = this.props.monitorState;
 
-    for (let i = 0; i < stagedActionIds.length; i++) {
-      const actionId = stagedActionIds[i];
-      const action = actionsById[actionId].action;
-      const { state, error } = computedStates[i];
-      let previousState;
-      if (i > 0) {
-        previousState = computedStates[i - 1].state;
-      }
-      elements.push(
-        <LogMonitorEntry key={actionId}
-                         theme={theme}
-                         select={select}
-                         action={action}
-                         actionId={actionId}
-                         state={state}
-                         previousState={previousState}
-                         collapsed={skippedActionIds.indexOf(actionId) > -1}
-                         selected={consecutiveToggleStartId === i}
-                         error={error}
-                         expandActionRoot={this.props.expandActionRoot}
-                         expandStateRoot={this.props.expandStateRoot}
-                         onActionClick={this.handleToggleAction}
-                         onActionShiftClick={this.handleToggleConsecutiveAction} />
-      );
-    }
+    const {
+      actionsById,
+      skippedActionIds,
+      stagedActionIds,
+      computedStates,
+      currentStateIndex,
+      select,
+      expandActionRoot,
+      expandStateRoot,
+      markStateDiff
+    } = this.props;
+
+    const entryListProps = {
+      theme,
+      actionsById,
+      skippedActionIds,
+      stagedActionIds,
+      computedStates,
+      currentStateIndex,
+      consecutiveToggleStartId,
+      select,
+      expandActionRoot,
+      expandStateRoot,
+      markStateDiff,
+      onActionClick: this.handleToggleAction,
+      onActionShiftClick: this.handleToggleConsecutiveAction
+    };
 
     return (
       <div style={{...styles.container, backgroundColor: theme.base00}}>
@@ -251,7 +255,7 @@ export default class LogMonitor extends Component {
           </LogMonitorButton>
         </div>
         <div style={styles.elements} ref='container'>
-          {elements}
+          <LogMonitorEntryList {...entryListProps} />
         </div>
       </div>
     );

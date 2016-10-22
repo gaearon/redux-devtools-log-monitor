@@ -8,9 +8,21 @@ const styles = {
     display: 'block',
     WebkitUserSelect: 'none'
   },
-  tree: {
-    paddingLeft: 0
+
+  root: {
+    marginLeft: 0
+  },
+
+  changedData: {
+    backgroundColor: 'rgba(128, 128, 128, 0.3)'
   }
+};
+
+const getDeepItem = (data, path) => path.reduce((obj, key) => obj && obj[key], data);
+const dataIsEqual = (data, previousData, keyPath) => {
+  const path = [...keyPath].reverse().slice(1);
+
+  return getDeepItem(data, path) === getDeepItem(previousData, path);
 };
 
 export default class LogMonitorEntry extends Component {
@@ -19,6 +31,7 @@ export default class LogMonitorEntry extends Component {
     action: PropTypes.object.isRequired,
     actionId: PropTypes.number.isRequired,
     select: PropTypes.func.isRequired,
+    inFuture: PropTypes.bool,
     error: PropTypes.string,
     onActionClick: PropTypes.func.isRequired,
     onActionShiftClick: PropTypes.func.isRequired,
@@ -33,24 +46,47 @@ export default class LogMonitorEntry extends Component {
   constructor(props) {
     super(props);
     this.handleActionClick = this.handleActionClick.bind(this);
+    this.shouldExpandNode = this.shouldExpandNode.bind(this);
   }
 
   printState(state, error) {
     let errorText = error;
     if (!errorText) {
       try {
+        const data = this.props.select(state);
+        let theme = this.props.theme;
+
+        if (this.props.markStateDiff) {
+          const previousData = typeof this.props.previousState !== 'undefined' ?
+            this.props.select(this.props.previousState) :
+            undefined;
+          const getValueStyle = ({ style }, nodeType, keyPath) => ({
+            style: {
+              ...style,
+              ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
+            }
+          });
+          const getNestedNodeStyle = ({ style }, keyPath) => ({
+            style: {
+              ...style,
+              ...(keyPath.length > 1 ? {} : styles.root)
+            }
+          });
+          theme = {
+            extend: this.props.theme,
+            tree: styles.tree,
+            value: getValueStyle,
+            nestedNode: getNestedNodeStyle
+          };
+        }
+
         return (
           <JSONTree
-            theme={this.props.theme}
+            theme={theme}
+            data={data}
+            invertTheme={false}
             keyPath={['state']}
-            data={this.props.select(state)}
-            previousData={
-              typeof this.props.previousState !== 'undefined' ?
-                this.props.select(this.props.previousState) :
-                undefined
-            }
-            expandRoot={this.props.expandStateRoot}
-            style={styles.tree} />
+            shouldExpandNode={this.shouldExpandNode} />
         );
       } catch (err) {
         errorText = 'Error selecting state.';
@@ -81,10 +117,14 @@ export default class LogMonitorEntry extends Component {
     }
   }
 
+  shouldExpandNode() {
+    return this.props.expandStateRoot;
+  }
+
   render() {
-    const { actionId, error, action, state, collapsed, selected } = this.props;
+    const { actionId, error, action, state, collapsed, selected, inFuture } = this.props;
     const styleEntry = {
-      opacity: (collapsed || selected) ? 0.5 : 1,
+      opacity: (collapsed || selected || inFuture) ? 0.5 : 1,
       cursor: (actionId > 0) ? 'pointer' : 'default'
     };
 
@@ -101,7 +141,7 @@ export default class LogMonitorEntry extends Component {
           onClick={this.handleActionClick}
           style={{...styles.entry, ...styleEntry}}/>
         {!collapsed &&
-          <div>
+          <div style={{ paddingLeft: 16 }}>
             {this.printState(state, error)}
           </div>
         }
