@@ -111,8 +111,8 @@ export default class LogMonitorEntry extends Component {
     }
   }
 
-  shouldExpandNode() {
-    return this.props.expandStateRoot;
+  shouldExpandNode(keyName, data, level) {
+    return this.props.expandStateRoot && level === 0;
   }
 
   render() {

@@ -36,8 +36,8 @@ export default class LogMonitorAction extends Component {
     );
   }
 
-  shouldExpandNode() {
-    return this.props.expandActionRoot;
+  shouldExpandNode(keyName, data, level) {
+    return this.props.expandActionRoot && level === 0;
   }
 
   render() {
