@@ -124,12 +124,13 @@ export default class LogMonitorEntry extends Component {
   render() {
     const { actionId, error, action, state, collapsed, selected, inFuture } = this.props;
     const styleEntry = {
-      opacity: (collapsed || selected || inFuture) ? 0.5 : 1,
+      opacity: (collapsed || inFuture) ? 0.5 : 1,
       cursor: (actionId > 0) ? 'pointer' : 'default'
     };
 
     return (
       <div style={{
+        opacity: selected ? 0.5 : 1,
         textDecoration: collapsed ? 'line-through' : 'none',
         color: this.props.theme.base06
       }}>
