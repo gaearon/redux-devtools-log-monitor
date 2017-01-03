@@ -3,12 +3,12 @@ import LogMonitorButton from './LogMonitorButton';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import * as themes from 'redux-devtools-themes';
 import { ActionCreators } from 'redux-devtools';
-import { updateScrollTop } from './actions';
+import { updateScrollTop, startConsecutiveToggle } from './actions';
 import reducer from './reducers';
 import LogMonitorEntryList from './LogMonitorEntryList';
 import debounce from 'lodash.debounce';
 
-const { reset, rollback, commit, sweep, toggleAction } = ActionCreators;
+const { reset, rollback, commit, sweep, toggleAction, setActionsActive } = ActionCreators;
 
 const styles = {
   container: {
@@ -50,7 +50,8 @@ export default class LogMonitor extends Component {
     stagedActionIds: PropTypes.array,
     skippedActionIds: PropTypes.array,
     monitorState: PropTypes.shape({
-      initialScrollTop: PropTypes.number
+      initialScrollTop: PropTypes.number,
+      consecutiveToggleStartId: PropTypes.number
     }),
 
     preserveScrollTop: PropTypes.bool,
@@ -87,6 +88,7 @@ export default class LogMonitor extends Component {
     this.handleRollback = this.handleRollback.bind(this);
     this.handleSweep = this.handleSweep.bind(this);
     this.handleCommit = this.handleCommit.bind(this);
+    this.handleToggleConsecutiveAction = this.handleToggleConsecutiveAction.bind(this);
   }
 
   scroll() {
@@ -161,6 +163,20 @@ export default class LogMonitor extends Component {
     this.props.dispatch(toggleAction(id));
   }
 
+  handleToggleConsecutiveAction(id) {
+    const { monitorState, actionsById } = this.props;
+    const { consecutiveToggleStartId } = monitorState;
+    if (consecutiveToggleStartId && actionsById[consecutiveToggleStartId]) {
+      const { skippedActionIds } = this.props;
+      const start = Math.min(consecutiveToggleStartId, id);
+      const end = Math.max(consecutiveToggleStartId, id);
+      const active = skippedActionIds.indexOf(consecutiveToggleStartId) > -1;
+      this.props.dispatch(setActionsActive(start, end + 1, active));
+    } else if (id > 0) {
+      this.props.dispatch(startConsecutiveToggle(id));
+    }
+  }
+
   handleReset() {
     this.props.dispatch(reset());
   }
@@ -181,6 +197,8 @@ export default class LogMonitor extends Component {
 
   render() {
     const theme = this.getTheme();
+    const { consecutiveToggleStartId } = this.props.monitorState;
+
     const {
       actionsById,
       skippedActionIds,
@@ -200,11 +218,13 @@ export default class LogMonitor extends Component {
       stagedActionIds,
       computedStates,
       currentStateIndex,
+      consecutiveToggleStartId,
       select,
       expandActionRoot,
       expandStateRoot,
       markStateDiff,
-      onActionClick: this.handleToggleAction
+      onActionClick: this.handleToggleAction,
+      onActionShiftClick: this.handleToggleConsecutiveAction
     };
 
     return (

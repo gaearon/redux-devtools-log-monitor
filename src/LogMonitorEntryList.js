@@ -9,6 +9,7 @@ export default class LogMonitorEntryList extends Component {
     stagedActionIds: PropTypes.array,
     skippedActionIds: PropTypes.array,
     currentStateIndex: PropTypes.number,
+    consecutiveToggleStartId: PropTypes.number,
 
     select: PropTypes.func.isRequired,
     onActionClick: PropTypes.func.isRequired,
@@ -29,13 +30,15 @@ export default class LogMonitorEntryList extends Component {
       actionsById,
       computedStates,
       currentStateIndex,
+      consecutiveToggleStartId,
       select,
       skippedActionIds,
       stagedActionIds,
       expandActionRoot,
       expandStateRoot,
       markStateDiff,
-      onActionClick
+      onActionClick,
+      onActionShiftClick
     } = this.props;
 
     for (let i = 0; i < stagedActionIds.length; i++) {
@@ -56,11 +59,13 @@ export default class LogMonitorEntryList extends Component {
           previousState={previousState}
           collapsed={skippedActionIds.indexOf(actionId) > -1}
           inFuture={i > currentStateIndex}
+          selected={consecutiveToggleStartId === i}
           error={error}
           expandActionRoot={expandActionRoot}
           expandStateRoot={expandStateRoot}
           markStateDiff={markStateDiff}
-          onActionClick={onActionClick} />
+          onActionClick={onActionClick}
+          onActionShiftClick={onActionShiftClick} />
       );
     }
 
