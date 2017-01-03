@@ -1,4 +1,4 @@
-import { UPDATE_SCROLL_TOP } from './actions';
+import { UPDATE_SCROLL_TOP, START_CONSECUTIVE_TOGGLE } from './actions';
 
 function initialScrollTop(props, state = 0, action) {
   if (!props.preserveScrollTop) {
@@ -10,8 +10,15 @@ function initialScrollTop(props, state = 0, action) {
     state;
 }
 
+function startConsecutiveToggle(props, state, action) {
+  return action.type === START_CONSECUTIVE_TOGGLE ?
+    action.id :
+    state;
+}
+
 export default function reducer(props, state = {}, action) {
   return {
-    initialScrollTop: initialScrollTop(props, state.initialScrollTop, action)
+    initialScrollTop: initialScrollTop(props, state.initialScrollTop, action),
+    consecutiveToggleStartId: startConsecutiveToggle(props, state.consecutiveToggleStartId, action)
   };
 }

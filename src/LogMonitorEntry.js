@@ -34,7 +34,9 @@ export default class LogMonitorEntry extends Component {
     inFuture: PropTypes.bool,
     error: PropTypes.string,
     onActionClick: PropTypes.func.isRequired,
+    onActionShiftClick: PropTypes.func.isRequired,
     collapsed: PropTypes.bool,
+    selected: PropTypes.bool,
     expandActionRoot: PropTypes.bool,
     expandStateRoot: PropTypes.bool
   };
@@ -104,10 +106,14 @@ export default class LogMonitorEntry extends Component {
     );
   }
 
-  handleActionClick() {
-    const { actionId, onActionClick } = this.props;
+  handleActionClick(e) {
+    const { actionId, onActionClick, onActionShiftClick } = this.props;
     if (actionId > 0) {
-      onActionClick(actionId);
+      if (e.shiftKey) {
+        onActionShiftClick(actionId);
+      } else {
+        onActionClick(actionId);
+      }
     }
   }
 
@@ -116,7 +122,7 @@ export default class LogMonitorEntry extends Component {
   }
 
   render() {
-    const { actionId, error, action, state, collapsed, inFuture } = this.props;
+    const { actionId, error, action, state, collapsed, selected, inFuture } = this.props;
     const styleEntry = {
       opacity: (collapsed || inFuture) ? 0.5 : 1,
       cursor: (actionId > 0) ? 'pointer' : 'default'
@@ -124,6 +130,7 @@ export default class LogMonitorEntry extends Component {
 
     return (
       <div style={{
+        opacity: selected ? 0.5 : 1,
         textDecoration: collapsed ? 'line-through' : 'none',
         color: this.props.theme.base06
       }}>
