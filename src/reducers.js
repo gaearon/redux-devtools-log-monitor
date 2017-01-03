@@ -13,7 +13,7 @@ function initialScrollTop(props, state = 0, action) {
 function startConsecutiveToggle(props, state, action) {
   return action.type === START_CONSECUTIVE_TOGGLE ?
     action.id :
-    state.consecutiveToggleStartId;
+    state;
 }
 
 export default function reducer(props, state = {}, action) {
