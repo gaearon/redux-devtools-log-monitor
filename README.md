@@ -55,6 +55,7 @@ Name                  | Description
 `expandActionRoot`    | When `true`, displays the action object expanded rather than collapsed. By default, set to `true`.
 `expandStateRoot`     | When `true`, displays the state object expanded rather than collapsed. By default, set to `true`.
 `markStateDiff`       | When `true`, mark the state's values which were changed comparing to the previous state. It affects the performance significantly! You might also want to set `expandStateRoot` to `true` as well when enabling it. By default, set to `false`.
+`hideMainButtons`     | When `true`, will show only the logs without the top button bar. By default, set to `false`.
 
 ### License
 

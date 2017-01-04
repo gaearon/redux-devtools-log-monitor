@@ -1,14 +1,14 @@
 import React, { PropTypes, Component } from 'react';
-import LogMonitorButton from './LogMonitorButton';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import * as themes from 'redux-devtools-themes';
 import { ActionCreators } from 'redux-devtools';
-import { updateScrollTop, startConsecutiveToggle } from './actions';
+import { startConsecutiveToggle } from './actions';
 import reducer from './reducers';
+import LogMonitorButtonBar from './LogMonitorButtonBar';
 import LogMonitorEntryList from './LogMonitorEntryList';
 import debounce from 'lodash.debounce';
 
-const { reset, rollback, commit, sweep, toggleAction, setActionsActive } = ActionCreators;
+const { toggleAction, setActionsActive } = ActionCreators;
 
 const styles = {
   container: {
@@ -20,20 +20,11 @@ const styles = {
     minWidth: 300,
     direction: 'ltr'
   },
-  buttonBar: {
-    textAlign: 'center',
-    borderBottomWidth: 1,
-    borderBottomStyle: 'solid',
-    borderColor: 'transparent',
-    zIndex: 1,
-    display: 'flex',
-    flexDirection: 'row'
-  },
   elements: {
     position: 'absolute',
     left: 0,
     right: 0,
-    top: 38,
+    top: 0,
     bottom: 0,
     overflowX: 'hidden',
     overflowY: 'auto'
@@ -62,7 +53,8 @@ export default class LogMonitor extends Component {
     ]),
     expandActionRoot: PropTypes.bool,
     expandStateRoot: PropTypes.bool,
-    markStateDiff: PropTypes.bool
+    markStateDiff: PropTypes.bool,
+    hideMainButtons: PropTypes.bool
   };
 
   static defaultProps = {
@@ -84,10 +76,6 @@ export default class LogMonitor extends Component {
   constructor(props) {
     super(props);
     this.handleToggleAction = this.handleToggleAction.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-    this.handleRollback = this.handleRollback.bind(this);
-    this.handleSweep = this.handleSweep.bind(this);
-    this.handleCommit = this.handleCommit.bind(this);
     this.handleToggleConsecutiveAction = this.handleToggleConsecutiveAction.bind(this);
   }
 
@@ -147,18 +135,6 @@ export default class LogMonitor extends Component {
     this.scroll();
   }
 
-  handleRollback() {
-    this.props.dispatch(rollback());
-  }
-
-  handleSweep() {
-    this.props.dispatch(sweep());
-  }
-
-  handleCommit() {
-    this.props.dispatch(commit());
-  }
-
   handleToggleAction(id) {
     this.props.dispatch(toggleAction(id));
   }
@@ -176,10 +152,6 @@ export default class LogMonitor extends Component {
     } else if (id > 0) {
       this.props.dispatch(startConsecutiveToggle(id));
     }
-  }
-
-  handleReset() {
-    this.props.dispatch(reset());
   }
 
   getTheme() {
@@ -201,6 +173,7 @@ export default class LogMonitor extends Component {
     const { consecutiveToggleStartId } = this.props.monitorState;
 
     const {
+      dispatch,
       actionsById,
       skippedActionIds,
       stagedActionIds,
@@ -230,33 +203,18 @@ export default class LogMonitor extends Component {
 
     return (
       <div style={{...styles.container, backgroundColor: theme.base00}}>
-        <div style={{...styles.buttonBar, borderColor: theme.base02}}>
-          <LogMonitorButton
+        {!this.props.hideMainButtons &&
+          <LogMonitorButtonBar
             theme={theme}
-            onClick={this.handleReset}
-            enabled>
-            Reset
-          </LogMonitorButton>
-          <LogMonitorButton
-            theme={theme}
-            onClick={this.handleRollback}
-            enabled={computedStates.length > 1}>
-            Revert
-          </LogMonitorButton>
-          <LogMonitorButton
-            theme={theme}
-            onClick={this.handleSweep}
-            enabled={skippedActionIds.length > 0}>
-            Sweep
-          </LogMonitorButton>
-          <LogMonitorButton
-            theme={theme}
-            onClick={this.handleCommit}
-            enabled={computedStates.length > 1}>
-            Commit
-          </LogMonitorButton>
-        </div>
-        <div style={styles.elements} ref='container'>
+            dispatch={dispatch}
+            hasStates={computedStates.length > 1}
+            hasSkippedActions={skippedActionIds.length > 0}
+          />
+        }
+        <div
+          style={this.props.hideMainButtons ? styles.elements : { ...styles.elements, top: 30 }}
+          ref='container'
+        >
           <LogMonitorEntryList {...entryListProps} />
         </div>
       </div>
