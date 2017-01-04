@@ -2,7 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import * as themes from 'redux-devtools-themes';
 import { ActionCreators } from 'redux-devtools';
-import { startConsecutiveToggle } from './actions';
+import { updateScrollTop, startConsecutiveToggle } from './actions';
 import reducer from './reducers';
 import LogMonitorButtonBar from './LogMonitorButtonBar';
 import LogMonitorEntryList from './LogMonitorEntryList';
@@ -69,7 +69,7 @@ export default class LogMonitor extends Component {
   shouldComponentUpdate = shouldPureComponentUpdate;
 
   updateScrollTop = debounce(() => {
-    const node = this.refs.container;
+    const node = this.node;
     this.props.dispatch(updateScrollTop(node ? node.scrollTop : 0));
   }, 500);
 
@@ -77,10 +77,11 @@ export default class LogMonitor extends Component {
     super(props);
     this.handleToggleAction = this.handleToggleAction.bind(this);
     this.handleToggleConsecutiveAction = this.handleToggleConsecutiveAction.bind(this);
+    this.getRef = this.getRef.bind(this);
   }
 
   scroll() {
-    const node = this.refs.container;
+    const node = this.node;
     if (!node) {
       return;
     }
@@ -92,7 +93,7 @@ export default class LogMonitor extends Component {
   }
 
   componentDidMount() {
-    const node = this.refs.container;
+    const node = this.node;
     if (!node || !this.props.monitorState) {
       return;
     }
@@ -107,14 +108,14 @@ export default class LogMonitor extends Component {
   }
 
   componentWillUnmount() {
-    const node = this.refs.container;
+    const node = this.node;
     if (node && this.props.preserveScrollTop) {
       node.removeEventListener('scroll', this.updateScrollTop);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const node = this.refs.container;
+    const node = this.node;
     if (!node) {
       this.scrollDown = true;
     } else if (
@@ -168,6 +169,10 @@ export default class LogMonitor extends Component {
     return themes.nicinabox;
   }
 
+  getRef(node) {
+    this.node = node;
+  }
+
   render() {
     const theme = this.getTheme();
     const { consecutiveToggleStartId } = this.props.monitorState;
@@ -213,7 +218,7 @@ export default class LogMonitor extends Component {
         }
         <div
           style={this.props.hideMainButtons ? styles.elements : { ...styles.elements, top: 30 }}
-          ref='container'
+          ref={this.getRef}
         >
           <LogMonitorEntryList {...entryListProps} />
         </div>
