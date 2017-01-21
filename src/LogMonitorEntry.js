@@ -11,10 +11,6 @@ const styles = {
 
   root: {
     marginLeft: 0
-  },
-
-  changedData: {
-    backgroundColor: 'rgba(128, 128, 128, 0.3)'
   }
 };
 
@@ -54,7 +50,7 @@ export default class LogMonitorEntry extends Component {
     if (!errorText) {
       try {
         const data = this.props.select(state);
-        let theme = this.props.theme;
+        let theme;
 
         if (this.props.markStateDiff) {
           const previousData = typeof this.props.previousState !== 'undefined' ?
@@ -63,7 +59,9 @@ export default class LogMonitorEntry extends Component {
           const getValueStyle = ({ style }, nodeType, keyPath) => ({
             style: {
               ...style,
-              ...(dataIsEqual(data, previousData, keyPath) ? {} : styles.changedData)
+              backgroundColor: dataIsEqual(data, previousData, keyPath) ?
+                'transparent' :
+                this.props.theme.base01
             }
           });
           const getNestedNodeStyle = ({ style }, keyPath) => ({
@@ -78,6 +76,8 @@ export default class LogMonitorEntry extends Component {
             value: getValueStyle,
             nestedNode: getNestedNodeStyle
           };
+        } else {
+          theme = this.props.theme;
         }
 
         return (
