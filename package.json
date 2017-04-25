@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "lodash.debounce": "^4.0.4",
+    "prop-types": "^15.0.0",
     "react-json-tree": "^0.10.0",
     "react-pure-render": "^1.0.2",
     "redux-devtools-themes": "^1.0.0"

@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import { ActionCreators } from 'redux-devtools';
 import LogMonitorButton from './LogMonitorButton';
