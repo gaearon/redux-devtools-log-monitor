@@ -66,6 +66,7 @@ export default class LogMonitorButton extends React.Component {
   render() {
     let style = {
       ...styles.base,
+      ...this.props.style,
       backgroundColor: this.props.theme.base02
     };
     if (this.props.enabled && this.state.hovered) {
