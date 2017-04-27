@@ -19,7 +19,6 @@ You can use `LogMonitor` as the only monitor in your app:
 ##### `containers/DevTools.js`
 
 ```js
-import React from 'react';
 import { createDevTools } from 'redux-devtools';
 import LogMonitor from 'redux-devtools-log-monitor';
 
