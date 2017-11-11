@@ -74,7 +74,7 @@ export default class LogMonitorButtonBar extends Component {
           theme={theme}
           onClick={this.handleCommit}
           enabled={hasStates}>
-          Commit
+          Clear
         </LogMonitorButton>
       </div>
     );
